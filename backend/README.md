@@ -1,6 +1,10 @@
 # Installation
+MongoDB
 https://docs.mongodb.com/manual/installation/
 
-# Run
+Setup .env file
+
 `npm install`
-`npm run`
+
+# Run
+`npm start`
