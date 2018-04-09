@@ -11,9 +11,11 @@ router.post('/signup', (req, res) => {
       password: req.body.password
     });
     user.save((err, newUser) => {
-      if(err) return res.status(500).send({message: 'MongoError'})
-      req.user = newUser;
-      return res.json({success: true});
+      if(err) return res.status(500).send({message: 'MongoError'});
+      return res.json({
+        success: true,
+        token: user.generateJWT()
+      });
     });
 });
 
@@ -23,8 +25,10 @@ router.post('/login', (req, res) => {
       if(err) return res.status(500).send({message: 'MongoError'})
       if(!user) return res.status(404).send({message: 'Email does not exist'});
       if(user.validatePassword(req.body.password)) {
-        req.user = user;
-        return res.json({success: true});
+        return res.json({
+          success: true,
+          token: user.generateJWT()
+        });
       } else {
         return res.status(400).send({message: 'Invalid password'});
       }

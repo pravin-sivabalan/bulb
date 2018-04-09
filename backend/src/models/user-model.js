@@ -30,6 +30,16 @@ UserSchema.pre('save', function(next) {
     });
 });
 
+UserSchema.methods.generateJWT = () => {
+    let expire = new Date();
+    expire.setDate(expire.getDate() + 7);
+    return jwt.sign({
+        id: this._id,
+        email: this.email,
+        exp: expire.getTime() / 1000
+    }, process.env.SECRET);
+};
+
 UserSchema.methods.validatePassword = function(password) {
     if(compareSync(password, this.password)) {
         return true;
