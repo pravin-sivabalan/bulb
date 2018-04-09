@@ -2,10 +2,7 @@ let express = require('express');
 let app = express();
 let morgan = require('morgan');
 let bodyParser = require('body-parser');
-let session = require('express-session');
-let MongoDBStore = require('connect-mongodb-session')(session);
 let jwt = require('express-jwt');
-let store = new MongoDBStore({ uri: process.env.DB, collection: 'mySessions' });
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());

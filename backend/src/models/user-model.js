@@ -1,6 +1,7 @@
-import { Schema as _Schema, model } from "mongoose";
-import { hash as _hash, compareSync } from "bcrypt";
-let Schema = _Schema;
+let mongoose = require('mongoose');
+let jwt = require('jsonwebtoken');
+let bcrypt = require('bcrypt');
+let Schema = mongoose.Schema;
 
 let UserSchema = new Schema({
     firstName: {
@@ -48,8 +49,6 @@ UserSchema.methods.validatePassword = function(password) {
     }
 }
 
-const User = model('User', UserSchema, 'users');
+let User = mongoose.model('User', UserSchema, 'user');
 
-export default {
-    User
-};
+module.exports = User;
