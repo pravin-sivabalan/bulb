@@ -1,6 +1,6 @@
-let mongoose = require('mongoose');
-let bcrypt = require('bcrypt');
-let Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+import { hash as _hash, compareSync } from "bcrypt";
+let Schema = _Schema;
 
 let UserSchema = new Schema({
     firstName: {
@@ -23,7 +23,7 @@ let UserSchema = new Schema({
 
 UserSchema.pre('save', function(next) {
     let user = this;
-    bcrypt.hash(this.password, 10, (err, hash) => {
+    _hash(this.password, 10, (err, hash) => {
         if(err) return next(err);
         this.password = hash;
         next();
@@ -41,11 +41,15 @@ UserSchema.methods.generateJWT = () => {
 };
 
 UserSchema.methods.validatePassword = function(password) {
-    if(bcrypt.compareSync(password, this.password)) {
+    if(compareSync(password, this.password)) {
         return true;
     } else {
         return false;
     }
 }
 
-let User = module.exports = mongoose.model('User', UserSchema, 'user');
+const User = model('User', UserSchema, 'users');
+
+export default {
+    User
+};
