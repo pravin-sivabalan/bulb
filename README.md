@@ -12,7 +12,7 @@
 * Mihir Tiwari 
 * Ashwin Gokhale
  
-Frontend Components
+## Frontend Components
 * Login/create account
 * feed (3 different filters)
 * specific idea component (contains description)
@@ -21,6 +21,6 @@ Frontend Components
 * navbar
 * logout
 
-Stretch Goal
+## Stretch Goal
 * Tags on ideas
 * Profile page
