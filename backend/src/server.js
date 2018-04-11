@@ -9,6 +9,7 @@ let app = require('./routes/index');
 app.server = http.createServer(app);
 mongoose.connect(process.env.DB, { useMongoClient: true });
 
+// Serves react app, only used in production
 if(process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../../frontend/build')));
   app.get('*', (req, res) => {
