@@ -3,7 +3,7 @@ let router = express.Router()
 let User = require('../models/user-model');
 
 router.post('/signup', (req, res) => {
-    if(!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password) return res.sendStatus(400);
+    if(!req.body.first_name || !req.body.last_name || !req.body.email || !req.body.password) return res.sendStatus(400);
     let user = User({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
