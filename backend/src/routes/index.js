@@ -2,7 +2,9 @@ let express = require('express');
 let app = express();
 let morgan = require('morgan');
 let bodyParser = require('body-parser');
+let path = require('path');
 let jwt = require('express-jwt');
+
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
