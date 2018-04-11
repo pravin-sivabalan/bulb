@@ -42,7 +42,7 @@ UserSchema.methods.generateJWT = () => {
 };
 
 UserSchema.methods.validatePassword = function(password) {
-    if(compareSync(password, this.password)) {
+    if(bcrypt.compareSync(password, this.password)) {
         return true;
     } else {
         return false;

@@ -10,13 +10,16 @@ router.post('/signup', (req, res) => {
       email: req.body.email,
       password: req.body.password
     });
-    user.save((err, newUser) => {
-      console.log(err);
-      if(err) return res.status(500).send({message: 'MongoError'});
-      return res.json({
-        success: true,
-        token: user.generateJWT()
-      });
+    User.findOne({email: req.body.email}, (err, user) => {
+        if(err) return res.status(500).send({message: 'MongoError'})
+        if(user) return res.status(409).send({message: 'User already exists'});
+        user.save((err, newUser) => {
+          if(err) return res.status(500).send({message: 'MongoError'});
+          return res.json({
+            success: true,
+            token: user.generateJWT()
+          });
+        });
     });
 });
 
