@@ -8,7 +8,7 @@
 `./deploy.sh`
 
 ## Creators
-Pravin Sivabalan
-Mihir Tiwari 
-Ashwin Gokhale
+* Pravin Sivabalan
+* Mihir Tiwari 
+* Ashwin Gokhale
  
