@@ -5,7 +5,7 @@
 <br>
 `chmod +x deploy.sh`
 <br>
-`./deploy.sh`
+`sudo ./deploy.sh`
 
 ## Creators
 * Pravin Sivabalan
