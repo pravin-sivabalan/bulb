@@ -5,12 +5,13 @@ let User = require('../models/user-model');
 router.post('/signup', (req, res) => {
     if(!req.body.first_name || !req.body.last_name || !req.body.email || !req.body.password) return res.sendStatus(400);
     let user = User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
       email: req.body.email,
       password: req.body.password
     });
     user.save((err, newUser) => {
+      console.log(err);
       if(err) return res.status(500).send({message: 'MongoError'});
       return res.json({
         success: true,
