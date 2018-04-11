@@ -1,9 +1,9 @@
 # Bulb
 
 ## Deployment
-`cp sample-deploy.sh deploy.sh`
+`sudo cp sample-deploy.sh deploy.sh`
 <br>
-`chmod +x deploy.sh`
+`sudo chmod +x deploy.sh`
 <br>
 `sudo ./deploy.sh`
 
