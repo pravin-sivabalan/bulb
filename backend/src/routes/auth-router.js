@@ -4,7 +4,7 @@ let User = require('../models/user-model');
 
 router.post('/signup', (req, res) => {
     if(!req.body.first_name || !req.body.last_name || !req.body.email || !req.body.password) return res.sendStatus(400);
-    let user = User({
+    let newUser = User({
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       email: req.body.email,
@@ -13,11 +13,11 @@ router.post('/signup', (req, res) => {
     User.findOne({email: req.body.email}, (err, user) => {
         if(err) return res.status(500).send({message: 'MongoError'})
         if(user) return res.status(409).send({message: 'User already exists'});
-        user.save((err, newUser) => {
+        newUser.save((err, newUser) => {
           if(err) return res.status(500).send({message: 'MongoError'});
           return res.json({
             success: true,
-            token: user.generateJWT()
+            token: newUser.generateJWT()
           });
         });
     });
