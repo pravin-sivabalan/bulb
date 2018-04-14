@@ -1,10 +1,10 @@
-let http = require('http');
-let mongoose = require('mongoose');
-let express = require('express');
-let path = require('path');
+const http = require('http');
+const mongoose = require('mongoose');
+const express = require('express');
+const path = require('path');
 require('dotenv').config();
 
-let app = require('./routes/index');
+const app = require('./routes/index');
 
 app.server = http.createServer(app);
 mongoose.connect(process.env.DB, { useMongoClient: true });

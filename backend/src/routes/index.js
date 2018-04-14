@@ -1,9 +1,9 @@
-let express = require('express');
-let app = express();
-let morgan = require('morgan');
-let bodyParser = require('body-parser');
-let path = require('path');
-let jwt = require('express-jwt');
+const express = require('express');
+const app = express();
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const path = require('path');
+const jwt = require('express-jwt');
 
 
 app.use(morgan('dev'));

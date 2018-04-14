@@ -39,3 +39,8 @@
 * Tags on ideas
 * Profile page
 * Edit idea
+
+
+####
+Code adapted from:
+* [https://github.com/rwieruch/react-redux-firebase-authentication](react-redux-firebase-authentication)
