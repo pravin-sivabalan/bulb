@@ -23,5 +23,6 @@ app.use(jwt({
 }));
 
 app.use('/api/auth', require('./auth-router'));
+app.use('/api/user', require('./user-router'));
 
 module.exports = app;

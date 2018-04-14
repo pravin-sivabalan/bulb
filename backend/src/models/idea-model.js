@@ -2,6 +2,11 @@ let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let IdeaSchema = new Schema({
+    _user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true
+    },
     title: {
       type: String,
       required: true
