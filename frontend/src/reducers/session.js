@@ -1,24 +1,24 @@
-import { AUTH_USER_SET, DB_USER_SET } from '../actions';
+import { AUTH_TOKEN_SET, DB_USER_SET } from '../actions';
 
 function sessionReducer(state = {
-  authUser: null,
-  dbUser: JSON.parse(localStorage.getItem('dbUser')) || null
+  token: localStorage.getItem('token') || null,
+  user: JSON.parse(localStorage.getItem('user')) || null
 }, action) {
   switch(action.type) {
-    case AUTH_USER_SET : {
-      localStorage.setItem('authUser', JSON.stringify(action.authUser))
+    case AUTH_TOKEN_SET : {
+      localStorage.setItem('token', action.token)
       return {
         ...state,
-        authUser: action.authUser
+        token: action.token
       }
     }
     case DB_USER_SET : {
-      localStorage.setItem('dbUser', JSON.stringify(action.dbUser))
+      localStorage.setItem('user', JSON.stringify(action.user))
       return {
         ...state,
-        dbUser: {
-          ...state.dbUser,
-          ...action.dbUser
+        user: {
+          ...state.user,
+          ...action.user
         }
       }
     }

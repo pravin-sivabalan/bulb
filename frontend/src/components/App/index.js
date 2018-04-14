@@ -1,55 +1,37 @@
-// import React, { Component } from 'react';
-// import logo from './logo.svg';
-// import './App.css';
-
-// class App extends Component {
-//   render() {
-//     return (
-//       <div className="App">
-//         <header className="App-header">
-//           <img src={logo} className="App-logo" alt="logo" />
-//           <h1 className="App-title">Welcome to React</h1>
-//         </header>
-//         <p className="App-intro">
-//           To get started, edit <code>src/App.js</code> and save to reload.
-//         </p>
-//       </div>
-//     );
-//   }
-// }
-
-// export default App;
-
-
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch
-} from 'react-router-dom';
-import HomePage from '../Home';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 // import withAuthentication from '../Session/withAuthentication';
-// import * as routes from '../../constants';
-
-import './index.css';
-
-const NoMatch = ({ location }) => (
-  <div>
-    <h3>
-      No match for <code>{location.pathname}</code>
-    </h3>
-  </div>
-);
+import Navigation from '../Navigation';
+import SignUpPage from '../SignUp';
+import SignInPage from '../SignIn';
+import HomePage from '../Home';
+import UserPage from '../UserPage';
+import AccountPage from '../Account';
+import SettingsPage from '../Settings';
+import CreateIdeaPage from '../CreateIdea';
+import { connect } from 'react-redux';
+import { fetchDBUser, setAuthUser } from '../../actions';
+import * as routes from '../../constants';
 
 const App = () =>
   <Router>
     <div className="app">
+      <Navigation />
       <Switch>
-        <Route exact="/" component={HomePage} />
+        <Route exact path={routes.HOME} component={HomePage} />
+        <Route exact path={routes.SIGN_UP} component={SignUpPage} />
+        <Route exact path={routes.LOGIN} component={SignInPage} />
+        <Route exact path={routes.ACCOUNT} component={AccountPage} />
+        <Route exact path={routes.SETTINGS} component={SettingsPage} />
+        <Route exact path={routes.CREATE_IDEA} component={CreateIdeaPage} />
+        <Route exact path="/user/:userid" component={UserPage} />
+        <Route component={({ location }) => <h3> No match for <code>{location.pathname}</code></h3>} />
       </Switch>
       <hr/>
     </div>
   </Router>
 
+// export default App;
+
 // export default withAuthentication(App);
-export default App;
+export default connect(null, { fetchDBUser, setAuthUser })(App);
