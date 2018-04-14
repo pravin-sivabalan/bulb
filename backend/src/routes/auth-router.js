@@ -11,7 +11,7 @@ router.post('/signup', (req, res) => {
       password: req.body.password
     });
     User.findOne({email: req.body.email}, (err, user) => {
-        if(err) return res.status(500).send({message: 'MongoError'})
+        if(err) return res.status(500).send({type: 'MongoError', message: err});
         if(user) return res.status(409).send({message: 'User already exists'});
         newUser.save((err, newUser) => {
           if(err) return res.status(500).send({message: 'MongoError'});
@@ -26,7 +26,7 @@ router.post('/signup', (req, res) => {
 router.post('/login', (req, res) => {
   if(!req.body.email || !req.body.password) return res.sendStatus(400);
   User.findOne({email: req.body.email}, (err, user) => {
-      if(err) return res.status(500).send({message: 'MongoError'})
+      if(err) return res.status(500).send({type: 'MongoError', message: err});
       if(!user) return res.status(404).send({message: 'Email does not exist'});
       if(user.validatePassword(req.body.password)) {
         return res.json({
