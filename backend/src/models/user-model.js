@@ -31,7 +31,7 @@ UserSchema.pre('save', function(next) {
     });
 });
 
-UserSchema.methods.generateJWT = () => {
+UserSchema.methods.generateJWT = function(){
     let expire = new Date();
     expire.setDate(expire.getDate() + 7);
     return jwt.sign({
