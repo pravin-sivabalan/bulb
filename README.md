@@ -21,6 +21,26 @@
 * navbar
 * logout
 
+## Backend Routes
+* POST /auth/signup 
+* POST /auth/login
+* GET /feed (personal) || /feed?type=0 (global) || /feed?type=0 (friends)
+* GET /idea/:id
+* POST /idea
+* DELETE /idea/:id
+* READ /idea/:id
+
+* GET /user/:id
+* PUT /user
+* DELETE /user
+
+
 ## Stretch Goal
 * Tags on ideas
 * Profile page
+* Edit idea
+
+
+####
+Code adapted from:
+* [https://github.com/rwieruch/react-redux-firebase-authentication](react-redux-firebase-authentication)
