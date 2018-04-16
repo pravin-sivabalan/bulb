@@ -9,9 +9,9 @@
 
 ## Creators
 * Pravin Sivabalan
-* Mihir Tiwari 
+* Mihir Tiwari
 * Ashwin Gokhale
- 
+
 ## Frontend Components
 * Login/create account
 * feed (3 different filters)
@@ -22,9 +22,9 @@
 * logout
 
 ## Backend Routes
-* POST /auth/signup 
+* POST /auth/signup
 * POST /auth/login
-* GET /feed (personal) || /feed?type=0 (global) || /feed?type=1 (friends)
+* GET /feed (global) || /feed?type=0 (friends) || /feed?type=1 (personal)
 * GET /idea/:id
 * POST /idea
 * DELETE /idea/:id

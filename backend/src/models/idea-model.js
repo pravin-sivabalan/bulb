@@ -15,15 +15,11 @@ let IdeaSchema = new Schema({
       type: String,
       required: true
     },
-    created_at: {
-      type: Date,
-      required: true
-    },
     likes: {
       type: Number,
       default: 0
     }
-});
+}, { timestamps: { createdAt: 'createdAt' } });
 
 let Idea = mongoose.model('Idea', IdeaSchema, 'idea');
 
