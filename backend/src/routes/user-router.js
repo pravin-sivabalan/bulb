@@ -5,8 +5,8 @@ let Authorized = require('../utilities/middleware');
 const { successRes, errorRes } = require('../utils');
 
 router.get('/', (req, res) => {
-    if (!req.query.id) return errorRes(res, 400, 'Must have an ID');
-    User.findById(req.user.id, (err, user) => {
+    if (!req.body.id) return errorRes(res, 400, 'Must have an ID');
+    User.findById(req.body.id, (err, user) => {
         res.json(user);
     });
 });
