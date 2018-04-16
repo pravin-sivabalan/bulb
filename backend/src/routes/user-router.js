@@ -7,7 +7,9 @@ const { successRes, errorRes } = require('../utils');
 router.get('/', (req, res) => {
     if (!req.body.id) return errorRes(res, 400, 'Must have an ID');
     User.findById(req.body.id, (err, user) => {
-        res.json(user);
+        return successRes(res, {
+            user
+        });
     });
 });
 
