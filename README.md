@@ -24,7 +24,7 @@
 ## Backend Routes
 * POST /auth/signup 
 * POST /auth/login
-* GET /feed (personal) || /feed?type=0 (global) || /feed?type=0 (friends)
+* GET /feed (personal) || /feed?type=0 (global) || /feed?type=1 (friends)
 * GET /idea/:id
 * POST /idea
 * DELETE /idea/:id
