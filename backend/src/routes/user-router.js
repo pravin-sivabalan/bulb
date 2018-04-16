@@ -4,9 +4,9 @@ let User = require('../models/user-model');
 let Authorized = require('../utilities/middleware');
 const { successRes, errorRes } = require('../utils');
 
-router.get('/', (req, res) => {
-    if (!req.body.id) return errorRes(res, 400, 'Must have an ID');
-    User.findById(req.body.id, (err, user) => {
+router.get('/:id', (req, res) => {
+    User.findById(req.params.id, (err, user) => {
+        if (!user) return errorRes(res, 404, 'User not found');
         return successRes(res, {
             user
         });
