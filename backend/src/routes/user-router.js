@@ -1,7 +1,7 @@
 let express = require('express')
 let router = express.Router()
 let User = require('../models/user-model');
-let Authorized = require('../utilities/middleware');
+let Authorized = require('../utils/middleware');
 const { successRes, errorRes } = require('../utils');
 
 router.get('/:id', (req, res) => {
