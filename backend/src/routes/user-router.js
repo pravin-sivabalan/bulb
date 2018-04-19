@@ -3,6 +3,12 @@ let router = express.Router()
 let User = require('../models/user-model');
 let Authorized = require('../utils/middleware');
 const { successRes, errorRes } = require('../utils');
+const Idea = require('../models/idea-model');
+
+/*
+* BUG: Even if I am deleted as a user I can post ideas and can get "deleted" multiple times
+*      ^ probably due to JWT still being active and valid
+*/
 
 router.get('/:id', (req, res) => {
     User.findById(req.params.id, (err, user) => {
@@ -36,6 +42,31 @@ router.put('/', Authorized, (req, res) => {
               token: user.generateJWT()
             });
           }
+        });
+    });
+});
+
+router.delete('/', Authorized, (req, res) => {
+    User.findByIdAndRemove(req.user.id, (err, user) => {
+        if (err)
+            return errorRes(res, 404, "Error removing user");
+
+        if (!user)
+            return errorRes(res, 404, "User doesn't exist");
+
+        console.log(user);
+        return successRes(res);
+    });
+
+    Idea.find({_user: req.user.id}, (err, ideas) => {
+        if (err)
+            return errorRes(res, 404, "Error finding ideas");
+
+        if (!ideas)
+            return errorRes(res, 404, "No ideas for user");
+
+        ideas.forEach((idea) => {
+            idea.remove();
         });
     });
 });
