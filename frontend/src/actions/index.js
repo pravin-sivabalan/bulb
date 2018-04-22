@@ -230,3 +230,7 @@ export const signOut = () => dispatch => {
 
 export const getIdToken = () => localStorage.getItem('token');
 export const getCurrentUser = () => JSON.parse(localStorage.getItem('user'));
+export const localStorageChanged = (e) => (dispatch, getState) => {
+	dispatch(onSetAuthToken(getIdToken()));
+	dispatch(onSetDBUser(getCurrentUser()));
+}
