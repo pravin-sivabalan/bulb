@@ -52,13 +52,12 @@ router.post('/', Authorized, (req, res) => {
 		_user: req.user.id,
 		title: req.body.title,
 		description: req.body.description,
+		_tags: req.body.tags ? req.body.tags : []
 	});
 
 	idea.save((err, newIdea) => {
 		if (err) return errorRes(res, 500, 'MongoError');
-		return successRes(res, {
-			idea: newIdea,
-		});
+		return successRes(res, newIdea);
 	});
 });
 
