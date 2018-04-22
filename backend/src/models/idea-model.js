@@ -33,6 +33,6 @@ let IdeaSchema = new Schema(
 	{ timestamps: { createdAt: 'createdAt' } }
 );
 
-let Idea = mongoose.model('Idea', IdeaSchema, 'idea');
+let Idea = mongoose.model('Idea', IdeaSchema, 'ideas');
 
 module.exports = Idea;
