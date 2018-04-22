@@ -16,6 +16,10 @@ let IdeaSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		_tags: {
+			type: [String],
+			required: false
+		},
 		friends: {
 			type: [mongoose.Schema.ObjectId],
 			ref: 'User',
