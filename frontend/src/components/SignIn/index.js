@@ -5,7 +5,6 @@ import { withRouter } from 'react-router-dom';
 import { SignUpLink } from '../Common';
 import { signIn } from '../../actions';
 import * as routes from '../../constants';
-import './index.css'
 
 class SignInPage extends Component {
   render = () =>
@@ -91,13 +90,7 @@ const mapStateToProps = (state) => ({
   userIdeas: state.ideasState.userIdeas,
 });
 
-// export default compose(
-//   // withAuthorization((authUser) => !!authUser),
-//   connect(mapStateToProps, { signIn })
-// )(SignInPage);
-
 export default connect(mapStateToProps, { signIn })(SignInPage);
-
 
 export {
   SignInForm,

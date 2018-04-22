@@ -5,7 +5,6 @@ import { compose } from 'recompose';
 import axios from 'axios';
 import { setAuthUser, createUser } from '../../actions'
 import * as routes from '../../constants';
-import './index.css';
 
 class SignUpPage extends Component {
   constructor(props) {
@@ -125,9 +124,6 @@ const SignUpLink = () =>
       <Link className="formats" to={routes.SIGN_UP}>Sign Up</Link>
     </div>
   </div>
-
-// export default withRouter(SignUpPage);
-// connect(null, { createUser })(SignUpForm)
 
 export default compose(
   withRouter,
