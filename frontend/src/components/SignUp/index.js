@@ -69,10 +69,10 @@ class SignUpForm extends Component {
       email === '';
 
     return (
-      <div className="signUpBackground">
-        <h1 className="signUpHeader">SIGN UP</h1>
+      <div>
+        <h1>SIGN UP</h1>
         <form onSubmit={this.onSubmit}>
-          <div className="signUpInfo">
+          
             <input
               value={firstName}
               onChange={event => this.setState({ firstName: event.target.value})}
@@ -103,13 +103,10 @@ class SignUpForm extends Component {
               type="password"
               placeholder="Confirm Password"
             />
-          </div>
-          <div className="centerSignUp">
-            <button className="signUpButton" disabled={isInvalid} type="submit">
+            <button disabled={isInvalid} type="submit">
               Sign Up
             </button>
-          </div>
-          { error && <p>{error.message}</p> }
+          { error && <p>{error}</p> }
         </form>
       </div>
     );

@@ -1,7 +1,7 @@
 import { AUTH_TOKEN_SET, DB_USER_SET } from '../actions';
 
 function sessionReducer(state = {
-  token: localStorage.getItem('token') || null,
+  token: JSON.parse(localStorage.getItem('token')) || null,
   user: JSON.parse(localStorage.getItem('user')) || null
 }, action) {
   switch(action.type) {

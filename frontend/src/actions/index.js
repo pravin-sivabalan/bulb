@@ -100,7 +100,6 @@ export const deleteIdea = (id) => {
 			});
 
 			console.log('Deleted user idea:', data);
-			// fetchUserIdeas();
 			dispatch(onDeleteUserIdea(id));
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
@@ -114,12 +113,12 @@ export const createUser = user => {
 	return async dispatch => {
 		try {
 			const { data } = await axios.post('/api/auth/signup', user);
-			dispatch(onSetAuthToken(data.token));
-			dispatch(onSetDBUser(data.user));
+			dispatch(onSetAuthToken(data.response.token));
+			dispatch(onSetDBUser(data.response.user));
 			return data;
 		} catch (error) {
-			console.error(error)
-			return error
+			console.error(error.response.data.error);
+			throw error.response.data.error;
 		}
 	}
 }
