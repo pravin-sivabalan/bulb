@@ -20,7 +20,7 @@ export const onSetFeedIdeas = (feedIdeas) => ({ type: FEED_IDEAS_SET, feedIdeas 
 export const onErrorFeedIdeas = (error) => ({ type: FEED_IDEAS_ERROR, error });
 export const onSetUserIdeas = (userIdeas) => ({ type: USER_IDEAS_SET, userIdeas });
 export const onAddUserIdea = (idea) => ({ type: USER_IDEAS_ADD, idea });
-export const onDeleteUserIdea = (ideaId) => ({ type: USER_IDEA_DELETED, ideaId });
+export const onDeleteUserIdea = (_id) => ({ type: USER_IDEA_DELETED, _id });
 export const onErrorUserIdeas = (error) => ({ type: USER_IDEAS_ERROR, error });
 
 // Session creators
@@ -43,7 +43,7 @@ export const fetchFeedIdeas = (params) => {
 			  
 			console.log('Got ideas feed:', data.response);
 			dispatch(onSetFeedIdeas(data.response));
-			
+			return data.response;
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorFeedIdeas(error.response.data.error));
@@ -62,6 +62,7 @@ export const fetchUserIdeas = () => {
 				const {_id} = getCurrentUser();
 				const ideas = await fetchIdeas(_id);
 				dispatch(onSetUserIdeas(ideas));
+				return ideas;
 			} catch (error) {
 				console.error('Error:', error.response.data.error);
 				dispatch(onErrorUserIdeas(error.response.data.error));

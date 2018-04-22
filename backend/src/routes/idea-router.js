@@ -17,7 +17,7 @@ router.get('/', Authorized, (req, res) => {
 		.populate('_user', ['_id', 'firstName', 'lastName', 'email'])
 		.exec((err, ideas) => {
 			if (err) return errorRes(500, 'MongoError');
-			successRes(res, { ideas: ideas });
+			return successRes(res, ideas);
 		});
 });
 
