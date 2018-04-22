@@ -5,6 +5,7 @@ const path = require('path');
 require('dotenv').config();
 
 const app = require('./routes/index');
+mongoose.Promise = Promise;
 
 app.server = http.createServer(app);
 mongoose.connect(process.env.DB, { useMongoClient: true });

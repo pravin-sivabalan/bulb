@@ -15,11 +15,11 @@ class AccountPage extends React.Component {
     console.log('Rendering userIdeas: ', userIdeas)
     return (
       <div>
-        <div className="postFeed">
+        <div>
           {
             userIdeas &&
             userIdeas.length ?
-            userIdeas.map((post,i) => <IdeaItem key={i} id={post.postId} type="user" post={post}/>) :
+            userIdeas.map((idea,i) => <IdeaItem key={i} id={idea._id} type="user" idea={idea}/>) :
             <p>You have created no ideas!</p>
           }
         </div>

@@ -13,9 +13,7 @@ const Idea = require('../models/idea-model');
 router.get('/:id', (req, res) => {
 	User.findById(req.params.id, (err, user) => {
 		if (!user) return errorRes(res, 404, 'User not found');
-		return successRes(res, {
-			user,
-		});
+		return successRes(res, user);
 	});
 });
 

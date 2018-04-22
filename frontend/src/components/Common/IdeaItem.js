@@ -7,31 +7,21 @@ import { deleteIdea } from '../../actions';
 
 class IdeaItem extends Component {
 	onClick = (e) => {
-		this.props.deleteIdea(this.props.post.postId);
+		this.props.deleteIdea(this.props.idea._id);
 	}
 
 	render() {
-		const { post, type } = this.props;
-		console.log('Idea item:', post);
+		const { idea, type } = this.props;
+		console.log('Idea item:', idea);
 		return (
-			<div className="placeHolder">
-				<div className="postTitle">
-					<div className="floatRight">{
-						type === 'user' ? <button onClick={this.onClick}>X</button> : null
-					}</div>
-					<h3>{post.title}</h3>
-				</div>
-				<div className="postInfo">
-					<div className="postPicture">
-						<img className="itemPicture" alt="itemPicture" src={post.photoUrls[0]}></img>
-					</div>
-					<div className="postDescription">
-						Made by: <Link to={`/user/${post.userId}`}>{post.userId}</Link>
-						<ul className="descriptionDetails">
-							{post.description}
-						</ul>
-					</div>
-				</div>
+			<div>
+				{
+					type === 'user' ? <button onClick={this.onClick}>X</button> : null
+				}
+				<h3>{idea.title}</h3>
+				<p>
+					{idea.description}
+				</p>
 			</div>
 		)
 	}

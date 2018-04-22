@@ -16,6 +16,10 @@ let IdeaSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		_tags: {
+			type: [String],
+			required: false
+		},
 		friends: {
 			type: [mongoose.Schema.ObjectId],
 			ref: 'User',
@@ -29,6 +33,6 @@ let IdeaSchema = new Schema(
 	{ timestamps: { createdAt: 'createdAt' } }
 );
 
-let Idea = mongoose.model('Idea', IdeaSchema, 'idea');
+let Idea = mongoose.model('Idea', IdeaSchema, 'ideas');
 
 module.exports = Idea;

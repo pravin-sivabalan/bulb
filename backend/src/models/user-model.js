@@ -60,6 +60,6 @@ UserSchema.methods.updatePassword = function(newPassword) {
 	}
 };
 
-let User = mongoose.model('User', UserSchema, 'user');
+let User = mongoose.model('User', UserSchema, 'users');
 
 module.exports = User;
