@@ -82,9 +82,11 @@ export const createIdea = (idea) => {
 			console.log('Created user idea:', response);
 			
 			dispatch(onAddUserIdea(response))
+			return response;
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorUserIdeas(error.response.data.error));
+			throw error.response.data.error;
 		}
 	}
 }

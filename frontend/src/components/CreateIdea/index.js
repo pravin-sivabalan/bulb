@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 import withAuthorization from '../Session/withAuthorization';
 import { authCondition } from '../../constants';
 import * as routes from '../../constants';
-import { updateDBUser, createIdea } from '../../actions';
+import { createIdea } from '../../actions';
 import axios from 'axios';
 import './index.css';
 
@@ -30,14 +30,34 @@ class CreateIdeaPage extends Component {
 	onChange = (e) => this.setState({[e.target.id] : e.target.value});
 
 	onSubmit = async (e) => {
-		e.preventDefault();
-		this.setState({error: null})
-		if (!this.state.description.length)
-			return this.setState({ error: 'Idea must have a description' })
-		if (!this.state.title.length)
-			return this.setState({ error: 'Idea must have a title' })
+		try {
+			e.preventDefault();
+			this.setState({error: null})
+			if (!this.state.description.length)
+				return this.setState({ error: 'Idea must have a description' })
+			if (!this.state.title.length)
+				return this.setState({ error: 'Idea must have a title' })
+			
+			console.log('State:', this.state);
+			console.log('Creating idea:', {
+				title: this.state.title,
+				description: this.state.description,
+				_tags: this.state.tags.map(tag => tag.text)
+			});
+
+			const idea = await this.props.createIdea({
+				title: this.state.title,
+				description: this.state.description,
+				_tags: this.state.tags.map(tag => tag.text)
+			});
+			
+			console.log('CreateIdea created idea:', idea);
+			this.props.history.push(routes.HOME);
+		} catch (error) {
+			console.log('Received error:', error);
+			this.setState({error})
+		}
 		
-		console.log('State:', this.state);
 		
 	}
 
@@ -96,5 +116,5 @@ const mapStateToProps = (state) => ({
 
 export default compose(
   	withAuthorization(authCondition),
-	connect(mapStateToProps, { updateDBUser, createIdea })
+	connect(mapStateToProps, { createIdea })
 )(CreateIdeaPage);
