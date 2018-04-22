@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { CREATE_IDEA } from '../../constants';
-import defaultPhoto from '../../assets/default.png';
 import withAuthorization from '../Session/withAuthorization';
 import IdeaItem from '../Common/IdeaItem';
 import { fetchFeedIdeas, fetchDBUser } from '../../actions';
