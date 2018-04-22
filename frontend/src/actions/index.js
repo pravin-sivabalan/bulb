@@ -47,6 +47,7 @@ export const fetchFeedIdeas = (params) => {
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorFeedIdeas(error.response.data.error));
+			throw error.response.data.error;
 		}
 		
 	}
@@ -64,6 +65,7 @@ export const fetchUserIdeas = () => {
 			} catch (error) {
 				console.error('Error:', error.response.data.error);
 				dispatch(onErrorUserIdeas(error.response.data.error));
+				throw error.response.data.error;
 			}
 		}
 	}
@@ -106,6 +108,7 @@ export const deleteIdea = (id) => {
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorUserIdeas(error.response.data.error));
+			throw error.response.data.error;
 		}
 	}
 }
@@ -135,9 +138,10 @@ export const fetchDBUser = () => {
 				// Get DB user and update Redux store
 				const user = await fetchUser();
 				dispatch(onSetDBUser(user));
+				return user;
 			} catch (error) {
-				console.error(error);
-				return error;
+				console.error(error.response.data.error);
+				throw error.response.data.error;
 			}
 		}
 	}
@@ -149,17 +153,18 @@ export const updateDBUser = (user) => {
 			// Get DB user and update Redux store
 			const token = getIdToken()
 			console.log('Updating user:', 'to:', user)
-			const response = await axios.put(
+			const { data: {response} } = await axios.put(
 				`/api/users/`, 
 				user,
 				{headers: {"Authorization" : `Bearer ${token}`}}
 			)
-			dispatch(onSetDBUser(user))
-			console.log(response.data.response)
-			return response.data.response
+			dispatch(onSetDBUser(response.user))
+			dispatch(onSetAuthToken(response.token));
+			console.log(response);
+			return response;
 		} catch (error) {
-			console.error(error)
-			return error
+			console.error(error.response.data.error)
+			throw error.response.data.error;
 		}
 	}
 }
@@ -176,7 +181,8 @@ export const deleteAccount = () => async dispatch => {
 		dispatch(onSetAuthToken(null));
 		console.log('Deleted user:', data.response);
 	} catch (error) {
-		console.error('Error:', error);
+		console.error(error.response.data.error)
+		throw error.response.data.error;
 	}
 }
 	
@@ -192,8 +198,8 @@ export const fetchUser = async id => {
 		console.log('Got User:', response.data.response);
 		return response.data.response
 	} catch (error) {
-		console.error(error)
-		return error;
+		console.error(error.response.data.error)
+		throw error.response.data.error;
 	}
 }
 
@@ -210,7 +216,7 @@ export const fetchIdeas = async id => {
 		return data.response;
 	} catch (error) {
 		console.error('Error:', error.response.data.error);
-		return error.response.data.error;
+		throw error.response.data.error;
 	}
 }
 
