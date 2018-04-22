@@ -1,7 +1,4 @@
-const successRes = (res, message) =>
-  typeof message === 'string'
-    ? res.json({ status: 200, message })
-    : res.json({ status: 200, ...message });
+const successRes = (res, response) => res.json({ status: 200, response });
 
 const errorRes = (res, status, error) =>
   res.status(status).json({

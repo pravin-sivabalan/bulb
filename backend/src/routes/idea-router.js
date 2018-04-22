@@ -4,6 +4,23 @@ const Idea = require('../models/idea-model');
 const Authorized = require('../utils/middleware');
 const router = express.Router();
 
+router.get('/', Authorized, (req, res) => {
+  const query = {}; // Global feed
+
+  if (req.query.type == 0) {
+    // TODO: add friends
+  } else if (req.query.type == 1) {
+    query._user = req.user.id; // Personal feed
+  }
+
+  Idea.find(query)
+    .populate('_user', ['_id', 'firstName', 'lastName', 'email'])
+    .exec((err, ideas) => {
+      if (err) return errorRes(500, 'MongoError');
+      successRes(res, { ideas: ideas });
+    });
+});
+
 router.get('/:id', Authorized, (req, res) => {
   Idea.findById(req.params.id, (err, idea) => {
     if (err) return errorRes(res, 500, 'MongoError');
@@ -29,8 +46,7 @@ router.delete('/:id', Authorized, (req, res) => {
 
 router.post('/', Authorized, (req, res) => {
   if (!req.body.title) return errorRes(res, 400, 'Idea must have a title');
-  if (!req.body.description)
-    return errorRes(res, 400, 'Idea must have a description');
+  if (!req.body.description) return errorRes(res, 400, 'Idea must have a description');
 
   const idea = Idea({
     _user: req.user.id,
@@ -44,6 +60,12 @@ router.post('/', Authorized, (req, res) => {
       idea: newIdea,
     });
   });
+});
+
+router.get('/user/:id', async (req, res) => {
+  const ideas = await Idea.find({_user: req.params.id});
+  console.log(ideas);
+  return successRes(res, ideas);
 });
 
 module.exports = router;
