@@ -73,4 +73,19 @@ router.get('/user/:id', async (req, res) => {
 	}
 });
 
+router.put('/:id', Authorized, async (req, res) => {
+  try {
+    const idea = await Idea.findById(req.params.id).exec();
+    if (req.query.like == 1)
+      idea.likes += 1;
+    else if (idea.likes > 0)
+      idea.likes -= 1;
+
+    const updatedIdea = await idea.save();
+    return successRes(res, updatedIdea);
+  } catch (error) {
+    return errorRes(res, 500, error);
+  }
+});
+
 module.exports = router;

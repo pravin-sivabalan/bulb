@@ -31,7 +31,8 @@ router.put('/', Authorized, async (req, res) => {
 				user[key] = req.body[key];
 		}
 
-		const newUser = await user.save();
+		const newUser = await User.update(user); 
+        
 		return successRes(res, {
 			newUser,
 			token: user.generateJWT(),

@@ -29,7 +29,7 @@
 * POST /idea
 * DELETE /idea/:id
 * READ /idea/:id
-
+* PUT /idea/:id?like=1 (idea liked) || /idea/:id?like=0 (idea unliked)
 * GET /user/:id
 * PUT /user
 * DELETE /user
