@@ -13,10 +13,7 @@ app.use(
     secret: process.env.SECRET,
     credentialsRequired: false,
     getToken: req => {
-      if (
-        req.headers.authorization &&
-        req.headers.authorization.split(' ')[0] === 'Bearer'
-      ) {
+      if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
         return req.headers.authorization.split(' ')[1];
       } else if (req.query && req.query.token) {
         return req.query.token;
@@ -30,5 +27,6 @@ app.use('/api/auth', require('./auth-router'));
 app.use('/api/user', require('./user-router'));
 app.use('/api/idea', require('./idea-router'));
 app.use('/api/feed', require('./feed-router'));
+app.use('/api/friend', require('./friend-router'));
 
 module.exports = app;
