@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { CREATE_IDEA } from '../../constants';
-import defaultPhoto from '../../assets/default.png';
 import withAuthorization from '../Session/withAuthorization';
 import IdeaItem from '../Common/IdeaItem';
 import { fetchUserIdeas, fetchDBUser } from '../../actions';
@@ -16,11 +15,11 @@ class AccountPage extends React.Component {
     console.log('Rendering userIdeas: ', userIdeas)
     return (
       <div>
-        <div className="postFeed">
+        <div>
           {
             userIdeas &&
             userIdeas.length ?
-            userIdeas.map((post,i) => <IdeaItem key={i} id={post.postId} type="user" post={post}/>) :
+            userIdeas.map((idea,i) => <IdeaItem key={i} id={idea._id} type="user" idea={idea}/>) :
             <p>You have created no ideas!</p>
           }
         </div>

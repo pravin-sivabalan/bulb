@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
 import { CREATE_IDEA } from '../../constants';
-import defaultPhoto from '../../assets/default.png';
 import withAuthorization from '../Session/withAuthorization';
 import IdeaItem from '../Common/IdeaItem';
 import { fetchFeedIdeas, fetchDBUser } from '../../actions';
@@ -15,15 +14,15 @@ class HomePage extends Component {
 
   render() {
     const { user, feedIdeas } = this.props;
-    console.log('Rendering feed posts:', feedIdeas)
+    console.log('Rendering feed ideas:', feedIdeas)
     return (
       <div>
         HOME PAGE
-        <div className="postFeed">
+        <div>
           {
             feedIdeas &&
             feedIdeas.length ? 
-            feedIdeas.map((post,i) => <IdeaItem key={i} id={i} type="feed" post={post}/>) :
+            feedIdeas.map((idea,i) => <IdeaItem key={i} id={i} type="feed" idea={idea}/>) :
             <p>No Ideas!</p>
           }
         </div>

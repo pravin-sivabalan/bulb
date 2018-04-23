@@ -28,7 +28,7 @@ function ideasReducer(state = {
 		case USER_IDEA_DELETED: {
 			return {
 				...state,
-				userIdeas: state.userIdeas.filter(item => item.ideaId !== action.ideaId)
+				userIdeas: state.userIdeas.filter(item => item._id !== action._id)
 			}
 		}
 		case USER_IDEAS_ADD: {

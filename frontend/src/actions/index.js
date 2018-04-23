@@ -20,7 +20,7 @@ export const onSetFeedIdeas = (feedIdeas) => ({ type: FEED_IDEAS_SET, feedIdeas 
 export const onErrorFeedIdeas = (error) => ({ type: FEED_IDEAS_ERROR, error });
 export const onSetUserIdeas = (userIdeas) => ({ type: USER_IDEAS_SET, userIdeas });
 export const onAddUserIdea = (idea) => ({ type: USER_IDEAS_ADD, idea });
-export const onDeleteUserIdea = (ideaId) => ({ type: USER_IDEA_DELETED, ideaId });
+export const onDeleteUserIdea = (_id) => ({ type: USER_IDEA_DELETED, _id });
 export const onErrorUserIdeas = (error) => ({ type: USER_IDEAS_ERROR, error });
 
 // Session creators
@@ -32,20 +32,22 @@ export const fetchFeedIdeas = (params) => {
 	return async (dispatch, getState) => {
 		try {
 			const token = getIdToken();
+			console.log('Token:', token);
 			const { data } = await axios.get(
 				`/api/ideas/`,
 				{
-				  headers: {token},
-				  params
+					headers: {"Authorization" : `Bearer ${token}`},
+					params
 				}
 			  )
 			  
-			console.log('Got ideas feed:', data.responseData);
-			dispatch(onSetFeedIdeas(data.responseData));
-			
+			console.log('Got ideas feed:', data.response);
+			dispatch(onSetFeedIdeas(data.response));
+			return data.response;
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorFeedIdeas(error.response.data.error));
+			throw error.response.data.error;
 		}
 		
 	}
@@ -57,11 +59,14 @@ export const fetchUserIdeas = () => {
 		else {
 			try {
 				// Get DB user and update Redux store
-				const ideas = await fetchIdeas();
+				const {_id} = getCurrentUser();
+				const ideas = await fetchIdeas(_id);
 				dispatch(onSetUserIdeas(ideas));
+				return ideas;
 			} catch (error) {
 				console.error('Error:', error.response.data.error);
 				dispatch(onErrorUserIdeas(error.response.data.error));
+				throw error.response.data.error;
 			}
 		}
 	}
@@ -73,16 +78,18 @@ export const createIdea = (idea) => {
 			const token = getIdToken();
 			// Get DB user and input into Redux store
 			console.log(`Creating user idea:`, idea)
-			const { data: {responseData} } = await axios.post('/api/ideas', idea, {
-				headers: {token}
+			const { data: {response} } = await axios.post('/api/ideas', idea, {
+				headers: {"Authorization" : `Bearer ${token}`}
 			})
 
-			console.log('Created user idea:', responseData);
+			console.log('Created user idea:', response);
 			
-			dispatch(onAddUserIdea(responseData))
+			dispatch(onAddUserIdea(response))
+			return response;
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorUserIdeas(error.response.data.error));
+			throw error.response.data.error;
 		}
 	}
 }
@@ -94,15 +101,15 @@ export const deleteIdea = (id) => {
 			// Get DB user and input into Redux store
 			console.log(`User: deleting idea: ${id}`)
 			const { data } = await axios.delete(`/api/ideas/${id}`,{
-				headers: {token}
+				headers: {"Authorization" : `Bearer ${token}`}
 			});
 
 			console.log('Deleted user idea:', data);
-			// fetchUserIdeas();
 			dispatch(onDeleteUserIdea(id));
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorUserIdeas(error.response.data.error));
+			throw error.response.data.error;
 		}
 	}
 }
@@ -112,12 +119,12 @@ export const createUser = user => {
 	return async dispatch => {
 		try {
 			const { data } = await axios.post('/api/auth/signup', user);
-			dispatch(onSetAuthToken(data.token));
-			dispatch(onSetDBUser(data.user));
+			dispatch(onSetAuthToken(data.response.token));
+			dispatch(onSetDBUser(data.response.user));
 			return data;
 		} catch (error) {
-			console.error(error)
-			return error
+			console.error(error.response.data.error);
+			throw error.response.data.error;
 		}
 	}
 }
@@ -132,9 +139,10 @@ export const fetchDBUser = () => {
 				// Get DB user and update Redux store
 				const user = await fetchUser();
 				dispatch(onSetDBUser(user));
+				return user;
 			} catch (error) {
-				console.error(error);
-				return error;
+				console.error(error.response.data.error);
+				throw error.response.data.error;
 			}
 		}
 	}
@@ -146,17 +154,18 @@ export const updateDBUser = (user) => {
 			// Get DB user and update Redux store
 			const token = getIdToken()
 			console.log('Updating user:', 'to:', user)
-			const response = await axios.put(
+			const { data: {response} } = await axios.put(
 				`/api/users/`, 
 				user,
-				{headers: {token}}
+				{headers: {"Authorization" : `Bearer ${token}`}}
 			)
-			dispatch(onSetDBUser(user))
-			console.log(response.data.responseData)
-			return response.data.responseData
+			dispatch(onSetDBUser(response.user))
+			dispatch(onSetAuthToken(response.token));
+			console.log(response);
+			return response;
 		} catch (error) {
-			console.error(error)
-			return error
+			console.error(error.response.data.error)
+			throw error.response.data.error;
 		}
 	}
 }
@@ -167,13 +176,14 @@ export const deleteAccount = () => async dispatch => {
 	try {
 		const token = getIdToken()
 		const { data } = await axios.delete(`/api/users/`,{
-			headers: {token}
+			headers: {"Authorization" : `Bearer ${token}`}
 		});
 		signOut();
 		dispatch(onSetAuthToken(null));
-		console.log('Deleted user:', data.responseData);
+		console.log('Deleted user:', data.response);
 	} catch (error) {
-		console.error('Error:', error);
+		console.error(error.response.data.error)
+		throw error.response.data.error;
 	}
 }
 	
@@ -184,49 +194,52 @@ export const fetchUser = async id => {
 		const token = getIdToken()
 		const response = await axios.get(
 			`/api/users/${id}`,
-			{headers: {token}}
+			{headers: {"Authorization" : `Bearer ${token}`},}
 		)
-		console.log('Got User:', response.data.responseData);
-		return response.data.responseData
+		console.log('Got User:', response.data.response);
+		return response.data.response
 	} catch (error) {
-		console.error(error)
-		return error;
+		console.error(error.response.data.error)
+		throw error.response.data.error;
 	}
 }
 
 export const fetchIdeas = async id => {
 	try {
-		const token = getIdToken()
+		const token = getIdToken();
 		// Get DB user and input into Redux store
 		console.log(`Getting user ideas w/ user id: ${id}`)
 		const { data } = await axios.get(
 			`/api/ideas/user/${id}`,
-			{headers: {token}}
+			{headers: {"Authorization" : `Bearer ${token}`},}
 		)
-		console.log('Got user ideas:', data.responseData);
-		return data.responseData;
+		console.log('Got user ideas:', data.response);
+		return data.response;
 	} catch (error) {
 		console.error('Error:', error.response.data.error);
-		return error.response.data.error;
+		throw error.response.data.error;
 	}
 }
 
 
 export const signIn = (email, password) => async dispatch => {
 	const { data } = await axios.post('/api/auth/login', {email, password});
-	console.log('Sign in returned data:', data);
-	dispatch(onSetAuthToken(data.token));
-	dispatch(onSetDBUser(data.user));
+	console.log('Sign in returned data:', data.response);
+	dispatch(onSetAuthToken(data.response.token));
+	dispatch(onSetDBUser(data.response.user));
 	return data;
 }
 
 export const signOut = () => dispatch => {
-	// localStorage.removeItem('token');
-	// localStorage.removeItem('user');
 	console.log('Signing out');
 	dispatch(onSetAuthToken(null));
 	dispatch(onSetDBUser(null));
 	console.log('Signed out');
 }
 
-export const getIdToken = () => localStorage.getItem('authToken');
+export const getIdToken = () => localStorage.getItem('token');
+export const getCurrentUser = () => JSON.parse(localStorage.getItem('user'));
+export const localStorageChanged = (e) => (dispatch, getState) => {
+	dispatch(onSetAuthToken(getIdToken()));
+	dispatch(onSetDBUser(getCurrentUser()));
+}

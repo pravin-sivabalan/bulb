@@ -10,6 +10,7 @@ const NavigationAuth = () =>
     <Link to={routes.HOME}><button >Home</button></Link>
     <Link to={routes.ACCOUNT}><button >Account</button></Link>
     <Link to={routes.SETTINGS}><button >Settings</button></Link>
+    <Link to={routes.CREATE_IDEA}><button >Create Idea</button></Link>
     <SignOutButton />
   </div>
 

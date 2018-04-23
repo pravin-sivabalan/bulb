@@ -5,7 +5,6 @@ import { compose } from 'recompose';
 import axios from 'axios';
 import { setAuthUser, createUser } from '../../actions'
 import * as routes from '../../constants';
-import './index.css';
 
 class SignUpPage extends Component {
   constructor(props) {
@@ -70,47 +69,53 @@ class SignUpForm extends Component {
       email === '';
 
     return (
-      <div className="signUpBackground">
-        <h1 className="signUpHeader">SIGN UP</h1>
+      <div>
+        <h1>SIGN UP</h1>
         <form onSubmit={this.onSubmit}>
-          <div className="signUpInfo">
-            <input
-              value={firstName}
-              onChange={event => this.setState({ firstName: event.target.value})}
-              type="text"
-              placeholder="First Name"
-            />
-            <input
-              value={lastName}
-              onChange={event => this.setState({ lastName: event.target.value})}
-              type="text"
-              placeholder="Last Name"
-            />
-            <input
-              value={email}
-              onChange={event => this.setState( {email: event.target.value} )}
-              type="text"
-              placeholder="Email Address"
-            />
-            <input
-              value={passwordOne}
-              onChange={event => this.setState( {passwordOne: event.target.value} )}
-              type="password"
-              placeholder="Password"
-            />
-            <input
-              value={passwordTwo}
-              onChange={event => this.setState( {passwordTwo: event.target.value} )}
-              type="password"
-              placeholder="Confirm Password"
-            />
-          </div>
-          <div className="centerSignUp">
-            <button className="signUpButton" disabled={isInvalid} type="submit">
-              Sign Up
-            </button>
-          </div>
-          { error && <p>{error.message}</p> }
+          <label>First Name</label>
+          <input
+            value={firstName}
+            onChange={event => this.setState({ firstName: event.target.value})}
+            type="text"
+            autoComplete='given-name'
+            placeholder="First Name"
+          /><br/>
+          <label>Last Name</label>
+          <input
+            value={lastName}
+            onChange={event => this.setState({ lastName: event.target.value})}
+            type="text"
+            autoComplete='family-name'
+            placeholder="Last Name"
+          /><br/>
+          <label>Email</label>
+          <input
+            value={email}
+            onChange={event => this.setState( {email: event.target.value} )}
+            type="email"
+            autoComplete='email'
+            placeholder="Email Address"
+          /><br/>
+          <label>Password</label>
+          <input
+            value={passwordOne}
+            onChange={event => this.setState( {passwordOne: event.target.value} )}
+            type="password"
+            autoComplete="new-password"
+            placeholder="Password"
+          /><br/>
+          <label>Confirm Password</label>
+          <input
+            value={passwordTwo}
+            onChange={event => this.setState( {passwordTwo: event.target.value} )}
+            type="password"
+            autoComplete="new-password"
+            placeholder="Confirm Password"
+          /><br/>
+          <button disabled={isInvalid} type="submit">
+            Sign Up
+          </button>
+          { error && <p>{error}</p> }
         </form>
       </div>
     );
@@ -125,9 +130,6 @@ const SignUpLink = () =>
       <Link className="formats" to={routes.SIGN_UP}>Sign Up</Link>
     </div>
   </div>
-
-// export default withRouter(SignUpPage);
-// connect(null, { createUser })(SignUpForm)
 
 export default compose(
   withRouter,

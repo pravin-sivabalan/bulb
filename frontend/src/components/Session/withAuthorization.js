@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
-import { setAuthUser, fetchDBUser } from '../../actions';
+import { localStorageChanged } from '../../actions';
 import * as routes from '../../constants';
 
 const withAuthorization = (props) => (Component) => {
@@ -15,9 +15,10 @@ const withAuthorization = (props) => (Component) => {
   const mapStateToProps = (store) => ({
     token: store.sessionState.token,
   });
+
   return compose(
     withRouter,
-    connect(mapStateToProps, { setAuthUser, fetchDBUser }),
+    connect(mapStateToProps, { localStorageChanged }),
   )(WithAuthorization);
 }
 

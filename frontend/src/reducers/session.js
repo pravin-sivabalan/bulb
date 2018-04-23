@@ -6,14 +6,14 @@ function sessionReducer(state = {
 }, action) {
   switch(action.type) {
     case AUTH_TOKEN_SET : {
-      localStorage.setItem('token', action.token)
+      action.token ? localStorage.setItem('token', action.token) : localStorage.removeItem('token')
       return {
         ...state,
         token: action.token
       }
     }
     case DB_USER_SET : {
-      localStorage.setItem('user', JSON.stringify(action.user))
+      action.user ? localStorage.setItem('user', JSON.stringify(action.user)) : localStorage.removeItem('user')
       return {
         ...state,
         user: {
