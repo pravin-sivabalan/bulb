@@ -178,8 +178,9 @@ export const deleteAccount = () => async dispatch => {
 		const { data } = await axios.delete(`/api/users/`,{
 			headers: {"Authorization" : `Bearer ${token}`}
 		});
-		signOut();
-		dispatch(onSetAuthToken(null));
+		signOut()(dispatch);
+		// dispatch(onSetAuthToken(null));
+		// dispatch(onSetDBUser(null));
 		console.log('Deleted user:', data.response);
 	} catch (error) {
 		console.error(error.response.data.error)
