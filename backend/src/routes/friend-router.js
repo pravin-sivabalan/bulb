@@ -14,7 +14,8 @@ router.post('/request', Authorized, (req, res) => {
     User.findById(req.body.friendId, (err, friend) => {
       if (err) return errorRes(res, 500, 'MongoError');
       if (!friend) return errorRes(res, 404, 'Friend does not exist');
-      if(friend.friendRequests.indexOf(user._id) > -1) return errorRes(res, 409, 'Friend request already sent');
+      if (friend.friendRequests.indexOf(user._id) > -1)
+        return errorRes(res, 409, 'Friend request already sent');
 
       friend.friendRequests.push(user._id);
       friend.save((err, updatedFriend) => {
