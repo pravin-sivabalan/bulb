@@ -31,7 +31,7 @@ router.put('/', Authorized, async (req, res) => {
 				user[key] = req.body[key];
 		}
 
-		const newUser = await user.update(user); 
+		const newUser = await User.update(user); 
         
 		return successRes(res, {
 			newUser,
