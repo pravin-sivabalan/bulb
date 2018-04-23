@@ -16,11 +16,6 @@ let IdeaSchema = new Schema(
       type: String,
       required: true,
     },
-    friends: {
-      type: [mongoose.Schema.ObjectId],
-      ref: 'User',
-      default: [],
-    },
     likes: {
       type: Number,
       default: 0,
