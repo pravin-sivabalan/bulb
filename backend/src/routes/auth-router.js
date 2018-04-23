@@ -4,13 +4,10 @@ const { successRes, errorRes } = require('../utils');
 const router = express.Router();
 
 router.post('/signup', (req, res) => {
-  if (!req.body.firstName)
-    return errorRes(res, 400, 'User must have a first name');
-  if (!req.body.lastName)
-    return errorRes(res, 400, 'User must have a last name');
+  if (!req.body.firstName) return errorRes(res, 400, 'User must have a first name');
+  if (!req.body.lastName) return errorRes(res, 400, 'User must have a last name');
   if (!req.body.email) return errorRes(res, 400, 'User must have an email');
-  if (!req.body.password)
-    return errorRes(res, 400, 'User must have a password');
+  if (!req.body.password) return errorRes(res, 400, 'User must have a password');
 
   const user = User({
     firstName: req.body.firstName,
@@ -34,9 +31,8 @@ router.post('/signup', (req, res) => {
 
 router.post('/login', (req, res) => {
   if (!req.body.email) return errorRes(res, 400, 'User must have an email');
-  if (!req.body.password)
-    return errorRes(res, 400, 'User must have a password');
-
+  if (!req.body.password) return errorRes(res, 400, 'User must have a password');
+  
   User.findOne({ email: req.body.email }, (err, user) => {
     if (err) return errorRes(res, 500, 'MongoError');
     if (!user) return errorRes(res, 404, 'Email does not exist');
