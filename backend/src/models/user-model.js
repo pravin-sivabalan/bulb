@@ -20,7 +20,17 @@ let UserSchema = new Schema({
     type: String,
     required: true,
   },
-});
+  friends: {
+    type: [mongoose.Schema.ObjectId],
+    ref: 'User',
+    default: [],
+  },
+  friendRequests: {
+    type: [mongoose.Schema.ObjectId],
+    ref: 'User',
+    default: [],
+  },
+}, { usePushEach: true });
 
 UserSchema.pre('save', function(next) {
   let user = this;
