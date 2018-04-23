@@ -12,7 +12,7 @@ const Idea = require('../models/idea-model');
 
 router.get('/:id', async (req, res) => {
 	try {
-		const user = await User.findById(req.params.id).exec();
+		const user = await User.findById(req.params.id, {password: 0}).exec();
 		if (!user) return errorRes(res, 404, 'User not found');	
 		return successRes(res, user);
 	} catch (error) {
@@ -46,8 +46,8 @@ router.delete('/', Authorized, async (req, res) => {
 		const user = await User.findByIdAndRemove(req.user.id).exec();
 		if (!user) return errorRes(res, 404, 'User doesn\'t exist');
 		const ideas = await Idea.find({ _user: req.user.id }).exec();
-		ideas.forEach(idea => idea.remove());
-		return successRes(res);
+		ideas.forEach(async idea => await idea.remove());
+		return successRes(res, user);
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}

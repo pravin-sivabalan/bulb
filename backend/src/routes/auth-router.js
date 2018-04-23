@@ -23,7 +23,11 @@ router.post('/signup', async (req, res) => {
 		const newUser = await user.save();
 
 		return successRes(res, {
-			user: newUser,
+			user: {
+				firstName: newUser.firstName,
+				lastName: newUser.lastName,
+				email: newUser.email
+			},
 			token: user.generateJWT(),
 		});
 	} catch (error) {
