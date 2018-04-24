@@ -21,7 +21,7 @@ class UserPage extends Component {
   componentWillMount = async () => {
 	  const id = this.props.match.params.userid;
 		const userInfo = await Promise.all([fetchUser(id), fetchIdeas(id)]);
-		if (this.props.authUser.uid === userInfo[0].uid) this.setState({currentUser: true});
+		if (this.props.user.uid === userInfo[0].uid) this.setState({currentUser: true});
 	  this.setState({user: userInfo[0]});
 	  this.setState({feedIdeas: userInfo[1]});
   }
@@ -35,5 +35,5 @@ class UserPage extends Component {
 
 export default compose(
 	withRouter,
-  	withAuthorization((authUser) => !!authUser),
+  withAuthorization(),
 )(UserPage);

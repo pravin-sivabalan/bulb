@@ -12,7 +12,7 @@ class IdeaItem extends Component {
 
 	render() {
 		const { idea, type } = this.props;
-		console.log('Idea item:', idea);
+		console.log('Idea item props:', idea);
 		return (
 			<div>
 				{
@@ -22,6 +22,7 @@ class IdeaItem extends Component {
 				<p>
 					{idea.description}
 				</p>
+				Posted by: <Link to={`/user/${idea._user._id}`}>{`${idea._user.firstName} ${idea._user.lastName}`}</Link>
 			</div>
 		)
 	}

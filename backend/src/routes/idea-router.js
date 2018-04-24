@@ -15,7 +15,7 @@ router.get('/', Authorized, async (req, res) => {
 		}
 
 		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email']).exec();
-		return successRes(res, ideas);	
+		return successRes(res, ideas);
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
@@ -66,8 +66,8 @@ router.post('/', Authorized, async (req, res) => {
 
 router.get('/user/:id', async (req, res) => {
 	try {
-		const ideas = await Idea.find({ _user: req.params.id });
-		return successRes(res, ideas);	
+		const ideas = await Idea.find({ _user: req.params.id }).populate('_user', ['_id', 'firstName', 'lastName', 'email']).exec();
+		return successRes(res, ideas);
 	} catch (error) {
 		return errorRes(res, 500, error);	
 	}

@@ -14,6 +14,7 @@ const withAuthorization = (props) => (Component) => {
 
   const mapStateToProps = (store) => ({
     token: store.sessionState.token,
+    user: store.sessionState.user
   });
 
   return compose(
