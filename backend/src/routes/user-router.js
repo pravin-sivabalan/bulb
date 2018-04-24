@@ -21,59 +21,59 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/follow', async (req, res) => {
-		try {
-			const user = await User.findById(req.user.id).exec();
-			if(!user) return errorRes(res, 404, 'Cannot find user');
+	try {
+		const user = await User.findById(req.user.id).exec();
+		if(!user) return errorRes(res, 404, 'Cannot find user');
 
-			let index = user.following.indexOf(req.body.followUserId);
-			if (index > -1) return errorRes(res, 404, 'Already following user');
+		let index = user.following.indexOf(req.body.followUserId);
+		if (index > -1) return errorRes(res, 404, 'Already following user');
 
-			const followUser = await User.findById(req.body.followUserId);
-			if(!followUser) return errorRes(res, 404, 'Cannot find follower');
+		const followUser = await User.findById(req.body.followUserId);
+		if(!followUser) return errorRes(res, 404, 'Cannot find follower');
 
-			user.following.push(followUser._id);
-			followUser.followers.push(user._id);
+		user.following.push(followUser._id);
+		followUser.followers.push(user._id);
 
-			const newFollowUser = await followUser.save();
-			const newUser = await user.save();
+		const newFollowUser = await followUser.save();
+		const newUser = await user.save();
 
-			return successRes(res, newUser);
-		} catch (error) {
-			console.error(error);
-			return errorRes(res, 500, error);
-		}
+		return successRes(res, newUser);
+	} catch (error) {
+		console.error(error);
+		return errorRes(res, 500, error);
+	}
 });
 
 router.post('/unfollow', async (req, res) => {
-		try {
-			const user = await User.findById(req.user.id).exec();
-			if(!user) return errorRes(res, 404, 'Cannot find user');
+	try {
+		const user = await User.findById(req.user.id).exec();
+		if(!user) return errorRes(res, 404, 'Cannot find user');
 
-			const unfollowUser = await User.findById(req.body.unfollowUserId);
-			if(!unfollowUser) return errorRes(res, 404, 'Cannot find follower');
+		const unfollowUser = await User.findById(req.body.unfollowUserId);
+		if(!unfollowUser) return errorRes(res, 404, 'Cannot find follower');
 
-			let index = user.following.indexOf(unfollowUser._id);
-			if (index > -1) {
-				user.following.splice(index, 1);
-			} else {
-				return errorRes(res, 404, 'User is not following this user');
-			}
-
-			index = unfollowUser.followers.indexOf(user._id);
-			if (index > -1) {
-				unfollowUser.followers.splice(index, 1);
-			} else {
-				return errorRes(res, 404, 'User is not following this user');
-			}
-
-			const newUnfollowUser = await unfollowUser.save();
-			const newUser = await user.save();
-
-			return successRes(res, newUser);
-		} catch (error) {
-			console.error(error);
-			return errorRes(res, 500, error);
+		let index = user.following.indexOf(unfollowUser._id);
+		if (index > -1) {
+			user.following.splice(index, 1);
+		} else {
+			return errorRes(res, 404, 'User is not following this user');
 		}
+
+		index = unfollowUser.followers.indexOf(user._id);
+		if (index > -1) {
+			unfollowUser.followers.splice(index, 1);
+		} else {
+			return errorRes(res, 404, 'User is not following this user');
+		}
+
+		const newUnfollowUser = await unfollowUser.save();
+		const newUser = await user.save();
+
+		return successRes(res, newUser);
+	} catch (error) {
+		console.error(error);
+		return errorRes(res, 500, error);
+	}
 });
 
 router.put('/', Authorized, async (req, res) => {

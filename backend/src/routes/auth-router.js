@@ -26,7 +26,8 @@ router.post('/signup', async (req, res) => {
 			user: {
 				firstName: newUser.firstName,
 				lastName: newUser.lastName,
-				email: newUser.email
+				email: newUser.email,
+				_id: newUser._id
 			},
 			token: user.generateJWT(),
 		});
