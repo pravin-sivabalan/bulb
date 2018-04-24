@@ -3,31 +3,31 @@ import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { SignOutButton } from '../Common';
+import { Menu, Header, Button } from 'semantic-ui-react';
+import { signOut } from '../../actions';
 import * as routes from '../../constants';
 
-const NavigationAuth = () =>
-  <div>
-    <Link to={routes.HOME}><button >Home</button></Link>
-    <Link to={routes.ACCOUNT}><button >Account</button></Link>
-    <Link to={routes.SETTINGS}><button >Settings</button></Link>
-    <Link to={routes.CREATE_IDEA}><button >Create Idea</button></Link>
-    <SignOutButton />
-  </div>
+const NavigationAuth = ({ signOut }) =>
+  <Menu>
+    <Menu.Item as={ Link } name='Home' to={routes.HOME}><Header as='h3' color='blue'>Bulb</Header></Menu.Item>
+    <Menu.Item as={ Link } name='Account' to={routes.ACCOUNT}>Account</Menu.Item>
+    <Menu.Item as={ Link } name='Settings' to={routes.SETTINGS}>Settings</Menu.Item>
+    <Menu.Item as={ Link } name='CreateIdea' to={routes.CREATE_IDEA}>Create Idea</Menu.Item>
+    <Menu.Item onClick={signOut} >Sign Out</Menu.Item>
+  </Menu>
 
 const NavigationNonAuth = () =>
-  <div>
-    <Link to={routes.LOGIN}><button >Log In</button></Link>
-    <Link to={routes.SIGN_UP}><button >Sign up</button></Link>
-  </div>
+  <Menu>
+    <Menu.Item as={ Link } name='Home' to={routes.LOGIN}><Header as='h3' color='blue'>Bulb</Header></Menu.Item>
+    <Menu.Item as={ Link } name='Login' to={routes.LOGIN}>Login</Menu.Item>
+    <Menu.Item as={ Link } name='Signup' to={routes.SIGN_UP}>Sign Up</Menu.Item>
+  </Menu>
 
 class NavigationHeader extends Component {
   render() {
     return (
       <div >
-        <Link to={this.props.token ? routes.HOME : routes.LOGIN}>
-          <h3>Bulb</h3>
-        </Link>
-        { this.props.token ? <NavigationAuth /> : <NavigationNonAuth /> }
+        { this.props.token ? <NavigationAuth signOut={this.props.signOut} /> : <NavigationNonAuth /> }
       </div>
     )
   }
@@ -37,4 +37,7 @@ const mapStateToProps = (store) => ({
   token: store.sessionState.token,
 });
 
-export default compose(withRouter,connect(mapStateToProps))(NavigationHeader);
+export default compose(
+  withRouter,
+  connect(mapStateToProps, { signOut })
+)(NavigationHeader);
