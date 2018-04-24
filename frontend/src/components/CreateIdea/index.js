@@ -7,6 +7,7 @@ import withAuthorization from '../Session/withAuthorization';
 import { authCondition } from '../../constants';
 import * as routes from '../../constants';
 import { createIdea } from '../../actions';
+import { Form, Input, TextArea } from 'semantic-ui-react'
 import axios from 'axios';
 import './index.css';
 
@@ -24,8 +25,8 @@ class CreateIdeaPage extends Component {
 	componentWillReceiveProps(nextProps) {
 		if(JSON.stringify(this.props.userIdeasError) !== JSON.stringify(nextProps.userIdeasError))
 			this.setState({ error: nextProps.userIdeasError })
-	} 
-	
+	}
+
 
 	onChange = (e) => this.setState({[e.target.id] : e.target.value});
 
@@ -37,7 +38,7 @@ class CreateIdeaPage extends Component {
 				return this.setState({ error: 'Idea must have a description' })
 			if (!this.state.title.length)
 				return this.setState({ error: 'Idea must have a title' })
-			
+
 			console.log('State:', this.state);
 			console.log('Creating idea:', {
 				title: this.state.title,
@@ -50,15 +51,15 @@ class CreateIdeaPage extends Component {
 				description: this.state.description,
 				_tags: this.state.tags.map(tag => tag.text)
 			});
-			
+
 			console.log('CreateIdea created idea:', idea);
 			this.props.history.push(routes.HOME);
 		} catch (error) {
 			console.log('Received error:', error);
 			this.setState({error})
 		}
-		
-		
+
+
 	}
 
 	handleDelete = (i) => {
@@ -82,28 +83,27 @@ class CreateIdeaPage extends Component {
 
         this.setState({ tags: newTags });
     }
-	
+
 	render = () => {
 		return (
-			<form onSubmit={this.onSubmit}>
-			
-				<label><strong>Title</strong></label><br />
-				<input placeholder="Add a title..." id="title" onChange={this.onChange} /><br/>
-				<label><strong>Description</strong></label><br/>
-				<textarea cols="86" rows ="10" placeholder="Add a description..." id="description" onChange={this.onChange} />
-				<br/>
+			<Form onSubmit={this.onSubmit}>
+				<h1 class="header">Create Idea</h1>
+				<Form.Input id="title" fluid label='Title' placeholder='Add a title...' onChange={this.onChange} />
+				<Form.TextArea id="description" cols="86" rows ="5" label='Description' placeholder="Add a description..." id="description" onChange={this.onChange} />
 
 				<label><strong>Tags</strong></label>
 				<ReactTags tags={this.state.tags}
                     handleDelete={this.handleDelete}
                     handleAddition={this.handleAddition}
-                    handleDrag={this.handleDrag} 
+                    handleDrag={this.handleDrag}
 				/>
 
-				<input type="submit" value="Submit" />
+				<div class="wrapper">
+					<Form.Button type="submit" value="Submit">Submit</Form.Button>
+				</div>
 
 				<p>{this.state.error}</p>
-			</form>
+			</Form>
 		)
 	}
 }
