@@ -87,7 +87,7 @@ class CreateIdeaPage extends Component {
 	render = () => {
 		return (
 			<Form onSubmit={this.onSubmit}>
-				<h1 class="header">Create Idea</h1>
+				<h1 className="header">Create Idea</h1>
 				<Form.Input id="title" fluid label='Title' placeholder='Add a title...' onChange={this.onChange} />
 				<Form.TextArea id="description" cols="86" rows ="5" label='Description' placeholder="Add a description..." id="description" onChange={this.onChange} />
 
@@ -98,7 +98,7 @@ class CreateIdeaPage extends Component {
                     handleDrag={this.handleDrag}
 				/>
 
-				<div class="wrapper">
+				<div className="wrapper">
 					<Form.Button type="submit" value="Submit">Submit</Form.Button>
 				</div>
 
