@@ -21,12 +21,12 @@ let UserSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		friends: {
+		followers: {
 			type: [mongoose.Schema.ObjectId],
 			ref: 'User',
 			default: [],
 		},
-		friendRequests: {
+		following: {
 			type: [mongoose.Schema.ObjectId],
 			ref: 'User',
 			default: [],
