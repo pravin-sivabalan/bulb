@@ -23,6 +23,5 @@ app.use(
 app.use('/api/auth', require('./auth-router'));
 app.use('/api/users', require('./user-router'));
 app.use('/api/ideas', require('./idea-router'));
-app.use('/api/friends', require('./friend-router'));
 
 module.exports = app;
