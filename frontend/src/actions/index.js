@@ -132,8 +132,7 @@ export const createUser = user => {
 
 export const fetchDBUser = () => {
 	return async dispatch => {
-		if (!getIdToken())
-			dispatch(onSetDBUser({}));
+		if (!getIdToken()) dispatch(onSetDBUser(null));
 		else {
 			try {
 				// Get DB user and update Redux store
