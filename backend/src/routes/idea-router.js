@@ -2,17 +2,20 @@ const { successRes, errorRes } = require('../utils');
 const express = require('express');
 const Idea = require('../models/idea-model');
 const Like = require('../models/like-model');
+const User = require('../models/user-model');
 const Authorized = require('../utils/middleware');
 const router = express.Router();
 
 router.get('/', Authorized, async (req, res) => {
 	try {
-		const query = {}; // Global feed
+		let query = {}; // Global Feed
 
-		if (req.query.type == 0) {
-			// TODO: add friends
-		} else if (req.query.type == 1) {
-			query._user = req.user._id; // Personal feed
+		if (req.query.type == 0) { // Followers Feed
+			let user = await User.findById(req.user.id).exec();
+			if(!user) return errorRes(res, 404, 'User not found');
+			query = {'_id': { $in: user.following }}
+		} else if (req.query.type == 1) { // Personal Feed 
+			query._user = req.user._id;
 		}
 
 		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).exec();
