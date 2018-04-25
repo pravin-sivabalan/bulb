@@ -7,7 +7,7 @@ import withAuthorization from '../Session/withAuthorization';
 import { authCondition } from '../../constants';
 import * as routes from '../../constants';
 import { createIdea } from '../../actions';
-import { Form, Input, TextArea } from 'semantic-ui-react'
+import { Form, Input, TextArea, Modal, Icon, Button, Header } from 'semantic-ui-react'
 import axios from 'axios';
 import './index.css';
 
@@ -27,6 +27,10 @@ class CreateIdeaPage extends Component {
 			this.setState({ error: nextProps.userIdeasError })
 	}
 
+	closeSubmitWindow = () => {
+		this.setState({error: null})
+	}
+
 
 	onChange = (e) => this.setState({[e.target.id] : e.target.value});
 
@@ -34,10 +38,10 @@ class CreateIdeaPage extends Component {
 		try {
 			e.preventDefault();
 			this.setState({error: null})
-			if (!this.state.description.length)
-				return this.setState({ error: 'Idea must have a description' })
 			if (!this.state.title.length)
 				return this.setState({ error: 'Idea must have a title' })
+			if (!this.state.description.length)
+				return this.setState({ error: 'Idea must have a description' })
 
 			console.log('State:', this.state);
 			console.log('Creating idea:', {
@@ -87,6 +91,17 @@ class CreateIdeaPage extends Component {
 	render = () => {
 		return (
 			<Form onSubmit={this.onSubmit}>
+				<Modal open={ !!this.state.error } close={ this.closeSubmitWindow } basic size="small">
+					<Header icon="announcement" content="Unfilled Fields" />
+					<Modal.Content>
+						<h3>{ this.state.error }</h3>
+					</Modal.Content>
+					<Modal.Actions>
+						<Button color='green' onClick={ this.closeSubmitWindow } inverted>
+							<Icon name="checkmark" /> OK
+						</Button>
+					</Modal.Actions>
+				</Modal>
 				<h1 className="header">Create Idea</h1>
 				<Form.Input id="title" fluid label='Title' placeholder='Add a title...' onChange={this.onChange} />
 				<Form.TextArea id="description" cols="86" rows ="5" label='Description' placeholder="Add a description..." id="description" onChange={this.onChange} />

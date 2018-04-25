@@ -5,6 +5,8 @@ import { compose } from 'recompose';
 import axios from 'axios';
 import { setAuthUser, createUser } from '../../actions'
 import * as routes from '../../constants';
+import './index.css'
+import { Form, Button, Icon, Header } from 'semantic-ui-react'
 
 class SignUpPage extends Component {
   constructor(props) {
@@ -70,53 +72,69 @@ class SignUpForm extends Component {
 
     return (
       <div>
-        <h1>SIGN UP</h1>
-        <form onSubmit={this.onSubmit}>
-          <label>First Name</label>
-          <input
-            value={firstName}
-            onChange={event => this.setState({ firstName: event.target.value})}
-            type="text"
-            autoComplete='given-name'
-            placeholder="First Name"
-          /><br/>
-          <label>Last Name</label>
-          <input
-            value={lastName}
-            onChange={event => this.setState({ lastName: event.target.value})}
-            type="text"
-            autoComplete='family-name'
-            placeholder="Last Name"
-          /><br/>
-          <label>Email</label>
-          <input
-            value={email}
-            onChange={event => this.setState( {email: event.target.value} )}
-            type="email"
-            autoComplete='email'
-            placeholder="Email Address"
-          /><br/>
-          <label>Password</label>
-          <input
-            value={passwordOne}
-            onChange={event => this.setState( {passwordOne: event.target.value} )}
-            type="password"
-            autoComplete="new-password"
-            placeholder="Password"
-          /><br/>
-          <label>Confirm Password</label>
-          <input
-            value={passwordTwo}
-            onChange={event => this.setState( {passwordTwo: event.target.value} )}
-            type="password"
-            autoComplete="new-password"
-            placeholder="Confirm Password"
-          /><br/>
-          <button disabled={isInvalid} type="submit">
-            Sign Up
-          </button>
-          { error && <p>{error}</p> }
-        </form>
+        <h1 className="signup"> Sign Up </h1>
+        <div className="signup-div">
+          <Form className="signup-form" onSubmit={this.onSubmit}> 
+            <Form.Field required>
+              <label>First Name:</label>
+              <Form.Input 
+                value={firstName} 
+                onChange={event => this.setState({firstName: event.target.value})}
+                type="text"
+                autoComplete='given-name'
+                placeholder='First Name'
+              />
+            </Form.Field>
+            <br />
+            <Form.Field required>
+              <label>Last Name:</label>
+              <Form.Input 
+                value={lastName} 
+                onChange={event => this.setState({lastName: event.target.value})}
+                type="text"
+                autoComplete='family-name'
+                placeholder='Last Name'
+              />
+            </Form.Field>
+            <br />
+            <Form.Field required>
+              <label>Email:</label>
+              <Form.Input 
+                value={email} 
+                onChange={event => this.setState({email: event.target.value})}
+                type="email"
+                autoComplete='email'
+                placeholder='Email'
+              />
+            </Form.Field>
+            <br />
+            <Form.Field required>
+              <label>Password:</label>
+              <Form.Input 
+                value={passwordOne} 
+                onChange={event => this.setState({passwordOne: event.target.value})}
+                type="password"
+                autoComplete='new-password'
+                placeholder='Password'
+              />
+            </Form.Field>
+            <br />
+            <Form.Field>
+              <label>Confirm Password:</label>
+              <Form.Input 
+                value={passwordTwo} 
+                onChange={event => this.setState({passwordTwo: event.target.value})}
+                type="password"
+                autoComplete='new-password'
+                placeholder='Confirm Password'
+              />
+            </Form.Field>
+            <div className="wrapper">
+              <Form.Button type="button" disabled={isInvalid} type="submit"> Sign Up </Form.Button>
+            </div>
+          </Form>
+        </div>
+        { error && <p>{error}</p> }
       </div>
     );
   }

@@ -11,9 +11,9 @@ const NavigationAuth = ({ signOut }) =>
   <Menu fluid compact stackable>
     <Menu.Item as={ Link } name='Home' to={routes.HOME}><Header as='h3' color='blue'>Bulb</Header></Menu.Item>
     <Menu.Item><Search/></Menu.Item>
-    <Menu.Item as={ Link } position='right' name='Account' to={routes.ACCOUNT}>Account</Menu.Item>
+    <Menu.Item position='right' as={ Link } name='CreateIdea' to={routes.CREATE_IDEA}>Create Idea</Menu.Item>
+    <Menu.Item as={ Link }  name='Account' to={routes.ACCOUNT}>Account</Menu.Item>
     <Menu.Item as={ Link } name='Settings' to={routes.SETTINGS}>Settings</Menu.Item>
-    <Menu.Item as={ Link } name='CreateIdea' to={routes.CREATE_IDEA}>Create Idea</Menu.Item>
     <Menu.Item onClick={signOut} >Sign Out</Menu.Item>
   </Menu>
 
