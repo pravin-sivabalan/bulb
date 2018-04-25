@@ -8,14 +8,15 @@ const router = express.Router();
 
 router.get('/', Authorized, async (req, res) => {
 	try {
-		const query = {}; 
-		
+		const query = {};
+
+		const currentUser = await User.findById(req.user.id).exec();
+		if(!currentUser) return errorRes(res, 404, 'User not found');
+
 		if (req.query.type === 'global') {
 			// Global feed
 		}
-		else if (req.query.type === 'follow') {
-			// TODO: add follow feed
-			const currentUser = await User.findById(req.user.id).exec();
+		else if (req.query.type === 'follow') { // TODO: add follow feed
 			console.log('Current User following:', currentUser.following);
 			const following = await User.find({
 				_id : {
@@ -27,7 +28,9 @@ router.get('/', Authorized, async (req, res) => {
 		}
 		else return errorRes(res, 400, `Invalid feed type: ${req.query.type}`);
 
-		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).exec();
+		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).lean().exec();
+		ideas.forEach((idea) => idea.userHasLiked = currentUser.likedIdeas.includes(idea._id));
+
 		return successRes(res, ideas);
 	} catch (error) {
 		return errorRes(res, 500, error);
@@ -90,20 +93,16 @@ router.put('/like/:id', Authorized, async (req, res) => {
 		const idea = await Idea.find({_id: req.params.id}).exec();
 		if(!idea) return errorRes(res, 404, 'Idea not found');
 
-		const hasLiked = await Like.find({_user: req.user.id, _idea: req.params.id}).exec();
-		if(hasLiked) return errorRes(res, 409, 'User has already liked this idea');
-
-		const like = Like({
-			_user: req.user.id,
-			_idea: req.params.id
-		});
+		const user = await User.findByIdAndUpdate(req.user.id, {$push: {'likedIdeas': idea._id}},{safe: true, upsert: true, new : true}).exec();
+		if(!user) return errorRes(res, 404, 'User does not exist');
 
 		idea.likes += 1;
 
-		const newLike = await like.save();
 		const updatedIdea = await idea.save();
-		return successRes(res, updatedIdea);
+		let updatedIdeaObject = updatedIdea.toObject();
+		updatedIdeaObject.userHasLiked = true;
 
+		return successRes(res, updatedIdeaObject);
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
@@ -114,14 +113,16 @@ router.put('/unlike/:id', Authorized, async (req, res) => {
 		const idea = await Idea.find({_id: req.params.id}).exec();
 		if(!idea) return errorRes(res, 404, 'Idea not found');
 
-		const like = await Like.find({_user: req.user.id, _idea: req.params.id}).remove().exec();
-		if(!like) return errorRes(res, 404, 'User has not liked this idea');
+		const user = await User.findByIdAndUpdate(req.user.id, {$pull: {'likedIdeas': idea._id}}).exec();
+		if(!user) return errorRes(res, 404, 'User does not exist');
 
 		idea.likes -= 1;
 
 		const updatedIdea = await idea.save();
-		return successRes(res, updatedIdea);
+		let updatedIdeaObject = updatedIdea.toObject();
+		updatedIdeaObject.userHasLiked = false;
 
+		return successRes(res, updatedIdeaObject);
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
