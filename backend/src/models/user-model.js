@@ -31,6 +31,11 @@ let UserSchema = new Schema(
 			ref: 'User',
 			default: [],
 		},
+		likedIdeas: {
+			type: [mongoose.Schema.ObjectId],
+			ref: 'Idea',
+			default: []
+		}
 	},
 	{ usePushEach: true }
 );

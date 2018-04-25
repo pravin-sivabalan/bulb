@@ -100,6 +100,7 @@ router.put('/', Authorized, async (req, res) => {
 
 router.delete('/', Authorized, async (req, res) => {
 	try {
+		// TODO: add remove from followers
 		const user = await User.findByIdAndRemove(req.user.id).exec();
 		if (!user) return errorRes(res, 404, 'User doesn\'t exist');
 		const ideas = await Idea.find({ _user: req.user.id }).exec();

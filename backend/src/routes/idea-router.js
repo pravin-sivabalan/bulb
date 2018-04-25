@@ -2,19 +2,21 @@ const { successRes, errorRes } = require('../utils');
 const express = require('express');
 const User = require('../models/user-model');
 const Idea = require('../models/idea-model');
+const Like = require('../models/like-model');
 const Authorized = require('../utils/middleware');
 const router = express.Router();
 
 router.get('/', Authorized, async (req, res) => {
 	try {
-		const query = {}; 
-		
+		const query = {};
+
+		const currentUser = await User.findById(req.user.id).exec();
+		if(!currentUser) return errorRes(res, 404, 'User not found');
+
 		if (req.query.type === 'global') {
 			// Global feed
 		}
-		else if (req.query.type === 'follow') {
-			// TODO: add follow feed
-			const currentUser = await User.findById(req.user.id).exec();
+		else if (req.query.type === 'follow') { // TODO: add follow feed
 			console.log('Current User following:', currentUser.following);
 			const following = await User.find({
 				_id : {
@@ -26,7 +28,9 @@ router.get('/', Authorized, async (req, res) => {
 		}
 		else return errorRes(res, 400, `Invalid feed type: ${req.query.type}`);
 
-		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email']).exec();
+		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).lean().exec();
+		ideas.forEach((idea) => idea.userHasLiked = currentUser.likedIdeas.includes(idea._id));
+
 		return successRes(res, ideas);
 	} catch (error) {
 		return errorRes(res, 500, error);
@@ -35,7 +39,7 @@ router.get('/', Authorized, async (req, res) => {
 
 router.get('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).exec();	
+		const idea = await Idea.findById(req.params.id).exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 		return successRes(res, idea);
 	} catch (error) {
@@ -51,7 +55,6 @@ router.delete('/:id', Authorized, async (req, res) => {
 		if (req.user.id != idea._user) return errorRes(res, 401, 'User is unauthorized to delete this idea');
 		const oldIdea = await Idea.findByIdAndRemove(req.params.id).exec();
 		return successRes(res, oldIdea);
-		
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
@@ -70,7 +73,7 @@ router.post('/', Authorized, async (req, res) => {
 		});
 
 		const newIdea = await idea.save();
-		return successRes(res, newIdea);	
+		return successRes(res, newIdea);
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
@@ -81,20 +84,45 @@ router.get('/user/:id', async (req, res) => {
 		const ideas = await Idea.find({ _user: req.params.id }).populate('_user', ['_id', 'firstName', 'lastName', 'email']).exec();
 		return successRes(res, ideas);
 	} catch (error) {
-		return errorRes(res, 500, error);	
+		return errorRes(res, 500, error);
 	}
 });
 
-router.put('/:id', Authorized, async (req, res) => {
+router.put('/like/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).exec();
-		if (req.query.like == 1)
-			idea.likes += 1;
-		else if (idea.likes > 0)
-			idea.likes -= 1;
+		const idea = await Idea.find({_id: req.params.id}).exec();
+		if(!idea) return errorRes(res, 404, 'Idea not found');
+
+		const user = await User.findByIdAndUpdate(req.user.id, {$push: {'likedIdeas': idea._id}},{safe: true, upsert: true, new : true}).exec();
+		if(!user) return errorRes(res, 404, 'User does not exist');
+
+		idea.likes += 1;
 
 		const updatedIdea = await idea.save();
-		return successRes(res, updatedIdea);
+		let updatedIdeaObject = updatedIdea.toObject();
+		updatedIdeaObject.userHasLiked = true;
+
+		return successRes(res, updatedIdeaObject);
+	} catch (error) {
+		return errorRes(res, 500, error);
+	}
+});
+
+router.put('/unlike/:id', Authorized, async (req, res) => {
+	try {
+		const idea = await Idea.find({_id: req.params.id}).exec();
+		if(!idea) return errorRes(res, 404, 'Idea not found');
+
+		const user = await User.findByIdAndUpdate(req.user.id, {$pull: {'likedIdeas': idea._id}}).exec();
+		if(!user) return errorRes(res, 404, 'User does not exist');
+
+		idea.likes -= 1;
+
+		const updatedIdea = await idea.save();
+		let updatedIdeaObject = updatedIdea.toObject();
+		updatedIdeaObject.userHasLiked = false;
+
+		return successRes(res, updatedIdeaObject);
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
