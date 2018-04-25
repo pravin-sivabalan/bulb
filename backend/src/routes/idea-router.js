@@ -47,10 +47,10 @@ router.get('/:id', Authorized, async (req, res) => {
 router.delete('/:id', Authorized, async (req, res) => {
 	try {
 		const idea = await Idea.findById(req.params.id).exec();
-		Idea.findById(req.params.id).exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 		if (req.user.id != idea._user) return errorRes(res, 401, 'User is unauthorized to delete this idea');
-		const oldIdea = await Idea.findByIdAndRemove(req.params.id).exec();
+		// const oldIdea = await Idea.findByIdAndRemove(req.params.id).exec();
+		const oldIdea = await idea.remove();
 		return successRes(res, oldIdea);
 	} catch (error) {
 		return errorRes(res, 500, error);
