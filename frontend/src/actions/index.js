@@ -128,8 +128,9 @@ export const deleteIdea = (id) => {
 				headers: {"Authorization" : `Bearer ${token}`}
 			});
 
-			console.log('Deleted user idea:', data);
-			dispatch(onRemoveUserFeed(id));
+			console.log('Deleted user idea:', data.response);
+			dispatch(onRemoveUserFeed(data.response));
+			return data.response;
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
 			dispatch(onErrorUserFeed(error.response.data.error));

@@ -87,10 +87,10 @@ router.put('/', Authorized, async (req, res) => {
 				user[key] = req.body[key];
 		}
 
-		const newUser = await User.update(user);
+		const newUser = await User.findByIdAndUpdate(req.user.id, user, {new: true}).exec();
 
 		return successRes(res, {
-			newUser,
+			user: newUser,
 			token: user.generateJWT(),
 		});
 	} catch (error) {
