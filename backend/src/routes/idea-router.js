@@ -1,6 +1,7 @@
 const { successRes, errorRes } = require('../utils');
 const express = require('express');
 const Idea = require('../models/idea-model');
+const Like = require('../models/like-model');
 const Authorized = require('../utils/middleware');
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.get('/', Authorized, async (req, res) => {
 			query._user = req.user._id; // Personal feed
 		}
 
-		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email']).exec();
+		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).exec();
 		return successRes(res, ideas);
 	} catch (error) {
 		return errorRes(res, 500, error);
@@ -23,7 +24,7 @@ router.get('/', Authorized, async (req, res) => {
 
 router.get('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).exec();	
+		const idea = await Idea.findById(req.params.id).exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 		return successRes(res, idea);
 	} catch (error) {
@@ -39,7 +40,6 @@ router.delete('/:id', Authorized, async (req, res) => {
 		if (req.user.id != idea._user) return errorRes(res, 401, 'User is unauthorized to delete this idea');
 		const oldIdea = await Idea.findByIdAndRemove(req.params.id).exec();
 		return successRes(res, oldIdea);
-		
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
@@ -58,7 +58,7 @@ router.post('/', Authorized, async (req, res) => {
 		});
 
 		const newIdea = await idea.save();
-		return successRes(res, newIdea);	
+		return successRes(res, newIdea);
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
@@ -69,20 +69,47 @@ router.get('/user/:id', async (req, res) => {
 		const ideas = await Idea.find({ _user: req.params.id }).populate('_user', ['_id', 'firstName', 'lastName', 'email']).exec();
 		return successRes(res, ideas);
 	} catch (error) {
-		return errorRes(res, 500, error);	
+		return errorRes(res, 500, error);
 	}
 });
 
-router.put('/:id', Authorized, async (req, res) => {
+router.put('/like/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).exec();
-		if (req.query.like == 1)
-			idea.likes += 1;
-		else if (idea.likes > 0)
-			idea.likes -= 1;
+		const idea = await Idea.find({_id: req.params.id}).exec();
+		if(!idea) return errorRes(res, 404, 'Idea not found');
+
+		const hasLiked = await Like.find({_user: req.user.id, _idea: req.params.id}).exec();
+		if(hasLiked) return errorRes(res, 409, 'User has already liked this idea');
+
+		const like = Like({
+			_user: req.user.id,
+			_idea: req.params.id
+		});
+
+		idea.likes += 1;
+
+		const newLike = await like.save();
+		const updatedIdea = await idea.save();
+		return successRes(res, updatedIdea);
+
+	} catch (error) {
+		return errorRes(res, 500, error);
+	}
+});
+
+router.put('/unlike/:id', Authorized, async (req, res) => {
+	try {
+		const idea = await Idea.find({_id: req.params.id}).exec();
+		if(!idea) return errorRes(res, 404, 'Idea not found');
+
+		const like = await Like.find({_user: req.user.id, _idea: req.params.id}).remove().exec();
+		if(!like) return errorRes(res, 404, 'User has not liked this idea');
+
+		idea.likes -= 1;
 
 		const updatedIdea = await idea.save();
 		return successRes(res, updatedIdea);
+
 	} catch (error) {
 		return errorRes(res, 500, error);
 	}
