@@ -1,18 +1,30 @@
 const { successRes, errorRes } = require('../utils');
 const express = require('express');
+const User = require('../models/user-model');
 const Idea = require('../models/idea-model');
 const Authorized = require('../utils/middleware');
 const router = express.Router();
 
 router.get('/', Authorized, async (req, res) => {
 	try {
-		const query = {}; // Global feed
-
-		if (req.query.type == 0) {
-			// TODO: add friends
-		} else if (req.query.type == 1) {
-			query._user = req.user._id; // Personal feed
+		const query = {}; 
+		
+		if (req.query.type === 'global') {
+			// Global feed
 		}
+		else if (req.query.type === 'follow') {
+			// TODO: add follow feed
+			const currentUser = await User.findById(req.user.id).exec();
+			console.log('Current User following:', currentUser.following);
+			const following = await User.find({
+				_id : {
+					$all: currentUser.following
+				}
+			});
+
+			query._user = following;
+		}
+		else return errorRes(res, 400, `Invalid feed type: ${req.query.type}`);
 
 		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email']).exec();
 		return successRes(res, ideas);
