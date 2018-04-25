@@ -1,48 +1,105 @@
-import { FEED_IDEAS_SET, FEED_IDEAS_ERROR, USER_IDEAS_SET, USER_IDEA_DELETED, USER_IDEAS_ADD, USER_IDEAS_ERROR } from '../actions';
+import {
+	GLOBAL_FEED_SET,
+	GLOBAL_FEED_ADD,
+	GLOBAL_FEED_REMOVE,
+	GLOBAL_FEED_ERROR,
+	FOLLOW_FEED_SET,
+	FOLLOW_FEED_ADD,
+	FOLLOW_FEED_REMOVE,
+	FOLLOW_FEED_ERROR,
+	USER_FEED_SET,
+	USER_FEED_ADD,
+	USER_FEED_REMOVE,
+	USER_FEED_ERROR
+} from '../actions';
 
 function ideasReducer(state = {
-	feedIdeas: [],
-	feedIdeasError: null,
-	userIdeas: [],
-	userIdeasError: null
+	globalFeed: [],
+	globalFeedError: null,
+	followFeed: [],
+	followFeedError: null,
+	userFeed: [],
+	userFeedError: null,
 }, action) {
 	switch (action.type) {
-		case FEED_IDEAS_SET: {
+		// Global feed
+		case GLOBAL_FEED_SET: {
 			return {
 				...state,
-				feedIdeas: action.feedIdeas
+				globalFeed: action.feed
 			}
 		}
-		case FEED_IDEAS_ERROR: {
+		case GLOBAL_FEED_ADD: {
 			return {
 				...state,
-				feedIdeasError: action.error
+				globalFeed: [...state.globalFeed, action.idea]
 			}
 		}
-		case USER_IDEAS_SET: {
+		case GLOBAL_FEED_REMOVE: {
 			return {
 				...state,
-				userIdeas: action.userIdeas
+				globalFeed: state.globalFeed.filter(idea => idea._id !== action.idea._id)
 			}
 		}
-		case USER_IDEA_DELETED: {
+		case GLOBAL_FEED_ERROR: {
 			return {
 				...state,
-				userIdeas: state.userIdeas.filter(item => item._id !== action._id)
+				globalFeedError: action.error
 			}
 		}
-		case USER_IDEAS_ADD: {
+
+		// Follow Feed
+		case FOLLOW_FEED_SET: {
 			return {
 				...state,
-				userIdeas: [...state.userIdeas, action.idea]
+				followFeed: action.feed
 			}
 		}
-		case USER_IDEAS_ERROR: {
+		case FOLLOW_FEED_ADD: {
 			return {
 				...state,
-				userIdeasError: action.error
+				followFeed: [...state.followFeed, action.idea]
 			}
 		}
+		case FOLLOW_FEED_REMOVE: {
+			return {
+				...state,
+				followFeed: state.followFeed.filter(idea => idea._id !== action.idea._id)
+			}
+		}
+		case FOLLOW_FEED_ERROR: {
+			return {
+				...state,
+				followFeedError: action.error
+			}
+		}
+
+		// User feed
+		case USER_FEED_SET: {
+			return {
+				...state,
+				userFeed: action.feed
+			}
+		}
+		case USER_FEED_ADD: {
+			return {
+				...state,
+				userFeed: [...state.userFeed, action.idea]
+			}
+		}
+		case USER_FEED_REMOVE: {
+			return {
+				...state,
+				userFeed: state.userFeed.filter(idea => idea._id !== action.idea._id)
+			}
+		}
+		case USER_FEED_ERROR: {
+			return {
+				...state,
+				userFeedError: action.error
+			}
+		}
+		
 		default:
 			return state;
 	}

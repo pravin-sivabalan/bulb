@@ -1,71 +1,95 @@
 import axios from 'axios';
 
 // Idea actions
-export const FEED_IDEAS_SET = 'FEED_IDEAS_SET';
-export const FEED_IDEAS_ERROR = 'FEED_IDEAS_ERROR';
-export const USER_IDEAS_SET = 'USER_IDEAS_SET';
-export const USER_IDEAS_ADD = 'USER_IDEAS_ADD';
-export const USER_IDEAS_ERROR = 'USER_IDEAS_ERROR';
-export const USER_IDEA_DELETED = 'USER_IDEA_DELETED';
+export const GLOBAL_FEED_SET = 'GLOBAL_FEED_SET';
+export const GLOBAL_FEED_ADD = 'GLOBAL_FEED_ADD';
+export const GLOBAL_FEED_REMOVE = 'GLOBAL_FEED_REMOVE';
+export const GLOBAL_FEED_ERROR = 'GLOBAL_FEED_ERROR';
+
+export const FOLLOW_FEED_SET = 'FOLLOW_FEED_SET';
+export const FOLLOW_FEED_ADD = 'FOLLOW_FEED_ADD';
+export const FOLLOW_FEED_REMOVE = 'FOLLOW_FEED_REMOVE';
+export const FOLLOW_FEED_ERROR = 'FOLLOW_FEED_ERROR';
+
+export const USER_FEED_SET = 'USER_FEED_SET';
+export const USER_FEED_ADD = 'USER_FEED_ADD';
+export const USER_FEED_REMOVE = 'USER_FEED_REMOVE';
+export const USER_FEED_ERROR = 'USER_FEED_ERROR';
 
 // Session actions
 export const AUTH_TOKEN_SET = 'AUTH_TOKEN_SET';
 export const DB_USER_SET = 'DB_USER_SET';
 
-// Users actions
-export const USERS_SET = 'USERS_SET';
-
 // Idea creators
-export const onSetFeedIdeas = (feedIdeas) => ({ type: FEED_IDEAS_SET, feedIdeas });
-export const onErrorFeedIdeas = (error) => ({ type: FEED_IDEAS_ERROR, error });
-export const onSetUserIdeas = (userIdeas) => ({ type: USER_IDEAS_SET, userIdeas });
-export const onAddUserIdea = (idea) => ({ type: USER_IDEAS_ADD, idea });
-export const onDeleteUserIdea = (_id) => ({ type: USER_IDEA_DELETED, _id });
-export const onErrorUserIdeas = (error) => ({ type: USER_IDEAS_ERROR, error });
+export const onSetGlobalFeed = (feed) => ({ type: GLOBAL_FEED_SET, feed });
+export const onAddGlobalFeed = (idea) => ({ type: GLOBAL_FEED_ADD, idea });
+export const onRemoveGlobalFeed = (idea) => ({ type: GLOBAL_FEED_REMOVE, idea });
+export const onErrorGlobalFeed = (error) => ({ type: GLOBAL_FEED_SET, error });
+
+export const onSetFollowFeed = (feed) => ({ type: FOLLOW_FEED_SET, feed });
+export const onAddFollowFeed = (idea) => ({ type: FOLLOW_FEED_ADD, idea });
+export const onRemoveFollowFeed = (idea) => ({ type: FOLLOW_FEED_REMOVE, idea });
+export const onErrorFollowFeed = (error) => ({ type: FOLLOW_FEED_SET, error });
+
+export const onSetUserFeed = (feed) => ({ type: USER_FEED_SET, feed });
+export const onAddUserFeed = (idea) => ({ type: USER_FEED_ADD, idea });
+export const onRemoveUserFeed = (idea) => ({ type: USER_FEED_REMOVE, idea });
+export const onErrorUserFeed = (error) => ({ type: USER_FEED_SET, error });
 
 // Session creators
 export const onSetDBUser = (user) => ({ type: DB_USER_SET, user });
 export const onSetAuthToken = (token) => ({ type: AUTH_TOKEN_SET, token });
 
 // Idea handlers
-export const fetchFeedIdeas = (params) => {
+export const fetchGlobalFeed = () => {
 	return async (dispatch, getState) => {
-		try {
-			const token = getIdToken();
-			console.log('Token:', token);
-			const { data } = await axios.get(
-				`/api/ideas/`,
-				{
-					headers: {"Authorization" : `Bearer ${token}`},
-					params
-				}
-			  )
-			  
-			console.log('Got ideas feed:', data.response);
-			dispatch(onSetFeedIdeas(data.response));
-			return data.response;
-		} catch (error) {
-			console.error('Error:', error.response.data.error);
-			dispatch(onErrorFeedIdeas(error.response.data.error));
-			throw error.response.data.error;
+		if (!getIdToken()) dispatch(onSetFollowFeed([]));
+		else {
+			try {
+				// Get DB user and update Redux store
+				const feed = await fetchFeed('global');
+				dispatch(onSetGlobalFeed(feed));
+				return feed;
+			} catch (error) {
+				console.error('Error:', error.response.data.error);
+				dispatch(onErrorUserFeed(error.response.data.error));
+				throw error.response.data.error;
+			}
 		}
-		
 	}
 }
 
-export const fetchUserIdeas = () => {
+export const fetchFollowFeed = () => {
+	return async (dispatch, getState) => {
+		if (!getIdToken()) dispatch(onSetFollowFeed([]));
+		else {
+			try {
+				// Get DB user and update Redux store
+				const feed = await fetchFeed('follow');
+				dispatch(onSetFollowFeed(feed));
+				return feed;
+			} catch (error) {
+				console.error('Error:', error.response.data.error);
+				dispatch(onErrorUserFeed(error.response.data.error));
+				throw error.response.data.error;
+			}
+		}
+	}
+}
+
+export const fetchUserFeed = () => {
 	return async dispatch => {
-		if (!getIdToken()) dispatch(onSetUserIdeas([]));
+		if (!getIdToken()) dispatch(onSetUserFeed([]));
 		else {
 			try {
 				// Get DB user and update Redux store
 				const {_id} = getCurrentUser();
 				const ideas = await fetchIdeas(_id);
-				dispatch(onSetUserIdeas(ideas));
+				dispatch(onSetUserFeed(ideas));
 				return ideas;
 			} catch (error) {
 				console.error('Error:', error.response.data.error);
-				dispatch(onErrorUserIdeas(error.response.data.error));
+				dispatch(onErrorUserFeed(error.response.data.error));
 				throw error.response.data.error;
 			}
 		}
@@ -84,11 +108,11 @@ export const createIdea = (idea) => {
 
 			console.log('Created user idea:', response);
 			
-			dispatch(onAddUserIdea(response))
+			dispatch(onAddUserFeed(response))
 			return response;
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
-			dispatch(onErrorUserIdeas(error.response.data.error));
+			dispatch(onErrorUserFeed(error.response.data.error));
 			throw error.response.data.error;
 		}
 	}
@@ -105,10 +129,10 @@ export const deleteIdea = (id) => {
 			});
 
 			console.log('Deleted user idea:', data);
-			dispatch(onDeleteUserIdea(id));
+			dispatch(onRemoveUserFeed(id));
 		} catch (error) {
 			console.error('Error:', error.response.data.error);
-			dispatch(onErrorUserIdeas(error.response.data.error));
+			dispatch(onErrorUserFeed(error.response.data.error));
 			throw error.response.data.error;
 		}
 	}
@@ -173,7 +197,7 @@ export const setAuthUser = authUser => dispatch => dispatch(onSetAuthToken(authU
 
 export const deleteAccount = () => async dispatch => {
 	try {
-		const token = getIdToken()
+		const token = getIdToken();
 		const { data } = await axios.delete(`/api/users/`,{
 			headers: {"Authorization" : `Bearer ${token}`}
 		});
@@ -214,6 +238,26 @@ export const fetchIdeas = async id => {
 			{headers: {"Authorization" : `Bearer ${token}`},}
 		)
 		console.log('Got user ideas:', data.response);
+		return data.response;
+	} catch (error) {
+		console.error('Error:', error.response.data.error);
+		throw error.response.data.error;
+	}
+}
+
+export const fetchFeed = async type => {
+	try {
+		const token = getIdToken();
+		// Get DB user and input into Redux store
+		console.log('Getting feed');
+		const { data } = await axios.get(
+			'/api/ideas',
+			{
+				params: { type },
+				headers: { "Authorization" : `Bearer ${token}` }
+			}
+		)
+		console.log('Got feed:', data.response);
 		return data.response;
 	} catch (error) {
 		console.error('Error:', error.response.data.error);

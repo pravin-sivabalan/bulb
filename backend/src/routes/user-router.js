@@ -20,15 +20,15 @@ router.get('/:id', async (req, res) => {
 	}
 });
 
-router.post('/follow', async (req, res) => {
+router.post('/follow/:id', async (req, res) => {
 	try {
 		const user = await User.findById(req.user.id).exec();
 		if(!user) return errorRes(res, 404, 'Cannot find user');
 
-		let index = user.following.indexOf(req.body.followUserId);
+		let index = user.following.indexOf(req.params.id);
 		if (index > -1) return errorRes(res, 404, 'Already following user');
 
-		const followUser = await User.findById(req.body.followUserId);
+		const followUser = await User.findById(req.params.id);
 		if(!followUser) return errorRes(res, 404, 'Cannot find follower');
 
 		user.following.push(followUser._id);
@@ -44,12 +44,12 @@ router.post('/follow', async (req, res) => {
 	}
 });
 
-router.post('/unfollow', async (req, res) => {
+router.post('/unfollow/:id', async (req, res) => {
 	try {
 		const user = await User.findById(req.user.id).exec();
 		if(!user) return errorRes(res, 404, 'Cannot find user');
 
-		const unfollowUser = await User.findById(req.body.unfollowUserId);
+		const unfollowUser = await User.findById(req.params.id);
 		if(!unfollowUser) return errorRes(res, 404, 'Cannot find follower');
 
 		let index = user.following.indexOf(unfollowUser._id);
