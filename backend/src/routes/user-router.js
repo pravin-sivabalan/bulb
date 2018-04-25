@@ -1,7 +1,7 @@
-let express = require('express');
-let router = express.Router();
-let User = require('../models/user-model');
-let Authorized = require('../utils/middleware');
+const express = require('express');
+const router = express.Router();
+const User = require('../models/user-model');
+const Authorized = require('../utils/middleware');
 const { successRes, errorRes, isEditable } = require('../utils');
 const Idea = require('../models/idea-model');
 
