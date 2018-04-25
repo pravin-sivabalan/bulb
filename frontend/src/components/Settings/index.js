@@ -10,7 +10,7 @@ class SettingsPage extends Component {
 	constructor(props) {
 		super(props);
 
-		console.log('Props:', this.props);
+		console.log('Settings Page Props:', this.props);
 		this.state = {
 			firstName: this.props.firstName,
 			lastName: this.props.lastName,
@@ -48,11 +48,10 @@ class SettingsPage extends Component {
 
 		event.preventDefault();
 		const { firstName, lastName, email } = this.state;
-		const { user } = this.props;
 		this.props.updateDBUser({
-			firstName: firstName || user.firstName,
-			lastName: lastName || user.lastName,
-			email: email || user.email,
+			firstName: firstName || this.props.firstName,
+			lastName: lastName || this.props.lastName,
+			email: email || this.props.email,
 		})
 		this.setState({submitted: true})
 	}
@@ -73,7 +72,7 @@ class SettingsPage extends Component {
 		// e => this.props.deleteAccount()
 		return (
 			<Form>
-				<Modal open={ !!this.state.error } close={ this.closeSubmitWindow } basic size="small">
+				<Modal open={ !!this.state.error } onClose={ this.closeSubmitWindow } basic size="small">
 					<Header icon="announcement" content="Unfilled Fields" />
 					<Modal.Content>
 						<h3>{ this.state.error }</h3>
@@ -84,7 +83,7 @@ class SettingsPage extends Component {
 						</Button>
 					</Modal.Actions>
 				</Modal>
-				<Modal open={ this.state.submitted } close={ this.closeConfirmWindow } basic size="small">
+				<Modal open={ this.state.submitted } onClose={ this.closeConfirmWindow } basic size="small">
 					<Header icon="announcement" content="Updated Information" />
 					<Modal.Content>
 						<h3>Your information has been updated</h3>
@@ -95,7 +94,7 @@ class SettingsPage extends Component {
 						</Button>
 					</Modal.Actions>
 				</Modal>
-				<Modal open= { this.state.delete } close={ this.closeDeleteWindow } basic size="small">
+				<Modal open= { this.state.delete } onClose={ this.closeDeleteWindow } basic size="small">
 					<Header icon="warning circle" content="Confirmation" />
 					<Modal.Content>
 						<h3>Are you sure you want to delete your account?</h3>
