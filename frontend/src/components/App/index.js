@@ -24,6 +24,7 @@ class App extends React.Component {
     <Router>
       <div className="app">
         <Navigation />
+        <br/>
         <Switch>
           <Route exact path={routes.HOME} component={HomePage} />
           <Route exact path={routes.SIGN_UP} component={SignUpPage} />

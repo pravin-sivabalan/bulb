@@ -5,21 +5,21 @@ import { Link } from 'react-router-dom';
 import { CREATE_IDEA } from '../../constants';
 import withAuthorization from '../Session/withAuthorization';
 import IdeaItem from '../Common/IdeaItem';
-import { fetchUserIdeas, fetchDBUser } from '../../actions';
+import { fetchUserFeed, fetchDBUser } from '../../actions';
 
 class AccountPage extends React.Component {
-  componentDidMount = () => this.props.fetchUserIdeas();
+  componentDidMount = () => this.props.fetchUserFeed();
 
   render() {
-    const { user, userIdeas } = this.props;
-    console.log('Rendering userIdeas: ', userIdeas)
+    const { user, userFeed } = this.props;
+    console.log('Rendering userFeed: ', userFeed)
     return (
       <div>
         <div>
           {
-            userIdeas &&
-            userIdeas.length ?
-            userIdeas.map((idea,i) => <IdeaItem key={i} id={idea._id} type="user" idea={idea}/>) :
+            userFeed &&
+            userFeed.length ?
+            userFeed.map((idea,i) => <IdeaItem key={i} id={idea._id} type="user" idea={idea}/>) :
             <p>You have created no ideas!</p>
           }
         </div>
@@ -30,10 +30,10 @@ class AccountPage extends React.Component {
 
 const mapStateToProps = (state) => ({
   user: state.sessionState.user,
-  userIdeas: state.ideasState.userIdeas,
+  userFeed: state.ideasState.userFeed,
 });
 
 export default compose(
   withAuthorization((authUser) => !!authUser),
-  connect(mapStateToProps, { fetchUserIdeas, fetchDBUser })
+  connect(mapStateToProps, { fetchUserFeed, fetchDBUser })
 )(AccountPage);
