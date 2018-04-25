@@ -19,25 +19,29 @@ class IdeaItem extends Component {
 			<Item>
 				<Container>
 					<Item.Content>
-						<Item.Header style={{display: 'inline-block'}}>{idea.title}
-							{
-								type === 'user' ? 
-									<Button color='red' floated='right' onClick={this.onClick}>X</Button> : 
-									null
-							}
+						<Item.Header style={{display: 'inline-block'}}>
+							{idea.title}
+							
 						</Item.Header>
 						<p>
 							Posted by: <Link to={`/user/${idea._user._id}`}>{`${idea._user.firstName} ${idea._user.lastName}`}</Link>
 						</p>
-						<Divider/>
+						{/* <Divider/> */}
 						<Item.Description>{idea.description}</Item.Description>
-						<Button as='div' labelPosition='right'>
-							<Button color='red'>
-								<Icon name='heart' />
-								Like
+						<Item.Extra>
+							<Button compact floated='left' size='small' as='div' labelPosition='right'>
+								<Button compact color='red' size='small' >
+									<Icon name='heart' />
+									Like
+								</Button>
+								<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
 							</Button>
-							<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
-						</Button>
+							{
+								type === 'user' ?		
+									<Button color='red' compact size='medium' floated='right' onClick={this.onClick}>X</Button> : 
+									null
+							}
+						</Item.Extra>
 					</Item.Content>
 				</Container>
 			</Item>

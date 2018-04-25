@@ -12,6 +12,7 @@ import CreateIdeaPage from '../CreateIdea';
 import { connect } from 'react-redux';
 import { localStorageChanged } from '../../actions';
 import * as routes from '../../constants';
+import './index.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -22,20 +23,22 @@ class App extends React.Component {
 
   render = () =>
     <Router>
-      <div className="app">
+      <div>
         <Navigation />
         <br/>
-        <Switch>
-          <Route exact path={routes.HOME} component={HomePage} />
-          <Route exact path={routes.SIGN_UP} component={SignUpPage} />
-          <Route exact path={routes.LOGIN} component={SignInPage} />
-          <Route exact path={routes.ACCOUNT} component={AccountPage} />
-          <Route exact path={routes.SETTINGS} component={SettingsPage} />
-          <Route exact path={routes.CREATE_IDEA} component={CreateIdeaPage} />
-          <Route exact path="/user/:userid" component={UserPage} />
-          <Route component={({ location }) => <h3> No match for <code>{location.pathname}</code></h3>} />
-        </Switch>
-        <hr/>
+        <div className="app">
+          <Switch>
+            <Route exact path={routes.HOME} component={HomePage} />
+            <Route exact path={routes.SIGN_UP} component={SignUpPage} />
+            <Route exact path={routes.LOGIN} component={SignInPage} />
+            <Route exact path={routes.ACCOUNT} component={AccountPage} />
+            <Route exact path={routes.SETTINGS} component={SettingsPage} />
+            <Route exact path={routes.CREATE_IDEA} component={CreateIdeaPage} />
+            <Route exact path="/user/:userid" component={UserPage} />
+            <Route component={({ location }) => <h3> No match for <code>{location.pathname}</code></h3>} />
+          </Switch>
+          <hr/>
+        </div>
       </div>
     </Router>
 }

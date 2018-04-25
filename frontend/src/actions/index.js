@@ -172,25 +172,23 @@ export const fetchDBUser = () => {
 	}
 }
 
-export const updateDBUser = (user) => {
-	return async dispatch => {
-		try {
-			// Get DB user and update Redux store
-			const token = getIdToken()
-			console.log('Updating user:', 'to:', user)
-			const { data: {response} } = await axios.put(
-				`/api/users/`, 
-				user,
-				{headers: {"Authorization" : `Bearer ${token}`}}
-			)
-			dispatch(onSetDBUser(response.user))
-			dispatch(onSetAuthToken(response.token));
-			console.log(response);
-			return response;
-		} catch (error) {
-			console.error(error.response.data.error)
-			throw error.response.data.error;
-		}
+export const updateDBUser = (user) => async dispatch => {
+	try {
+		// Get DB user and update Redux store
+		const token = getIdToken()
+		console.log('Updating user:', 'to:', user)
+		const { data: {response} } = await axios.put(
+			`/api/users/`, 
+			user,
+			{headers: {"Authorization" : `Bearer ${token}`}}
+		)
+		dispatch(onSetDBUser(response.user))
+		dispatch(onSetAuthToken(response.token));
+		console.log(response);
+		return response;
+	} catch (error) {
+		console.error(error.response.data.error)
+		throw error.response.data.error;
 	}
 }
 
@@ -282,8 +280,50 @@ export const signOut = () => dispatch => {
 	console.log('Signed out');
 }
 
+export const followUser = id => async dispatch => {
+	try {
+		// Get DB user and update Redux store
+		const token = getIdToken();
+		console.log('Following user:', id)
+		const { data: {response} } = await axios.post(
+			`/api/users/follow/${id}`, 
+			null,
+			{headers: {"Authorization" : `Bearer ${token}`}}
+		)
+		dispatch(onSetDBUser(response));
+		// dispatch(onSetAuthToken(response.token));
+		console.log(response);
+		return response;
+	} catch (error) {
+		console.error(error.response.data.error)
+		throw error.response.data.error;
+	}
+}
+
+export const unFollowUser = id => async dispatch => {
+	try {
+		// Get DB user and update Redux store
+		const token = getIdToken();
+		console.log('Following user:', id)
+		const { data: {response} } = await axios.post(
+			`/api/users/unfollow/${id}`, 
+			null,
+			{headers: {"Authorization" : `Bearer ${token}`}}
+		)
+		dispatch(onSetDBUser(response));
+		// dispatch(onSetAuthToken(response.token));
+		console.log(response);
+		return response;
+	} catch (error) {
+		console.error(error.response.data.error)
+		throw error.response.data.error;
+	}
+}
+
 export const getIdToken = () => localStorage.getItem('token');
+
 export const getCurrentUser = () => JSON.parse(localStorage.getItem('user'));
+
 export const localStorageChanged = (e) => (dispatch, getState) => {
 	dispatch(onSetAuthToken(getIdToken()));
 	dispatch(onSetDBUser(getCurrentUser()));
