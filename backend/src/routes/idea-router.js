@@ -2,7 +2,6 @@ const { successRes, errorRes } = require('../utils');
 const express = require('express');
 const User = require('../models/user-model');
 const Idea = require('../models/idea-model');
-const Like = require('../models/like-model');
 const Authorized = require('../utils/middleware');
 const router = express.Router();
 
