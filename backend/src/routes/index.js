@@ -2,10 +2,12 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const jwt = require('express-jwt');
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(
 	jwt({

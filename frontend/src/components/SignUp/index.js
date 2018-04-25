@@ -5,8 +5,8 @@ import { compose } from 'recompose';
 import axios from 'axios';
 import { setAuthUser, createUser } from '../../actions'
 import * as routes from '../../constants';
-import './index.css'
-import { Form, Button, Icon, Header } from 'semantic-ui-react'
+import { Form, Button, Icon, Header } from 'semantic-ui-react';
+// import './index.css'
 
 class SignUpPage extends Component {
   constructor(props) {

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link } from 'react-router-dom';
+import { Container, ItemGroup, Divider, Header } from 'semantic-ui-react';
 import { CREATE_IDEA } from '../../constants';
 import withAuthorization from '../Session/withAuthorization';
 import IdeaItem from '../Common/IdeaItem';
@@ -14,16 +15,19 @@ class AccountPage extends React.Component {
     const { user, userFeed } = this.props;
     console.log('Rendering userFeed: ', userFeed)
     return (
-      <div>
-        <div>
+      <Container>
+        <Header>Your Posts:</Header>
+        <Divider/>
+        
+        <ItemGroup divided>
           {
             userFeed &&
             userFeed.length ?
             userFeed.map((idea,i) => <IdeaItem key={i} id={idea._id} type="user" idea={idea}/>) :
             <p>You have created no ideas!</p>
           }
-        </div>
-      </div>
+        </ItemGroup>
+      </Container>
     )
   }
 }
