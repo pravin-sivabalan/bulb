@@ -63,7 +63,7 @@ UserSchema.methods.generateJWT = function() {
 };
 
 UserSchema.methods.validatePassword = function(password) {
-	if (bcrypt.compareSync(password, this.password)) {
+	if (bcrypt.compare(password, this.password)) {
 		return true;
 	} else {
 		return false;
@@ -71,7 +71,7 @@ UserSchema.methods.validatePassword = function(password) {
 };
 
 UserSchema.methods.updatePassword = function(newPassword) {
-	if (bcrypt.compareSync(newPassword, this.password)) {
+	if (bcrypt.compare(newPassword, this.password)) {
 		return false;
 	} else {
 		return true;
