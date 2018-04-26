@@ -244,6 +244,41 @@ export const fetchIdeas = async id => {
 	}
 }
 
+export const fetchIdea = async id => {
+	try {
+		const token = getIdToken();
+		// Get DB user and input into Redux store
+		console.log(`Getting user ideas w/ user id: ${id}`)
+		const { data } = await axios.get(
+			`/api/ideas/${id}`,
+			{headers: {"Authorization" : `Bearer ${token}`},}
+		)
+		console.log('Got idea:', data.response);
+		return data.response;
+	} catch (error) {
+		console.error('Error:', error.response.data.error);
+		throw error.response.data.error;
+	}
+}
+
+export const createComment = async (id, comment) => {
+	try {
+		const token = getIdToken();
+		// Get DB user and input into Redux store
+		console.log(`Creating comment: ${comment}`)
+		const { data } = await axios.post(
+			`/api/ideas/comment/${id}`,
+			{comment},
+			{headers: {"Authorization" : `Bearer ${token}`},}
+		)
+		console.log('Got idea after commenting:', data.response);
+		return data.response;
+	} catch (error) {
+		console.error('Error:', error.response.data.error);
+		throw error.response.data.error;
+	}
+}
+
 export const fetchFeed = async type => {
 	try {
 		const token = getIdToken();

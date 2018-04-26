@@ -20,8 +20,7 @@ class IdeaItem extends Component {
 				<Container>
 					<Item.Content>
 						<Item.Header style={{display: 'inline-block'}}>
-							{idea.title}
-							
+							<Link to={`/idea/${idea._id}`}>{idea.title}</Link>
 						</Item.Header>
 						<p>
 							Posted by: <Link to={`/user/${idea._user._id}`}>{`${idea._user.firstName} ${idea._user.lastName}`}</Link>
