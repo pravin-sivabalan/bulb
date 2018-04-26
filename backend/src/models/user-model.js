@@ -63,9 +63,7 @@ UserSchema.methods.validatePassword = function(password) {
 };
 
 UserSchema.methods.updatePassword = function(newPassword) {
-	bcrypt.compare(password, this.password, (err, res) => {
-		return res;
-	});
+	return bcrypt.compareSync(password, this.password);
 };
 
 let User = mongoose.model('User', UserSchema, 'users');
