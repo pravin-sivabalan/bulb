@@ -5,6 +5,8 @@ import { withRouter } from 'react-router-dom';
 import { SignUpLink } from '../Common';
 import { signIn } from '../../actions';
 import * as routes from '../../constants';
+import { Form, Button, Icon, Header, Modal } from 'semantic-ui-react';
+import './index.css'
 
 class SignInPage extends Component {
   render = () =>
@@ -16,7 +18,8 @@ class SignInPage extends Component {
 const INITIAL_STATE = {
   email: '',
   password: '',
-  error: null,
+  error: '',
+  fail: false,
 };
 
 class SignInForm extends Component {
@@ -35,8 +38,14 @@ class SignInForm extends Component {
       this.setState(() => ({ ...INITIAL_STATE }));
       history.push(routes.HOME);
     } catch (error) {
-      this.setState({error});
+      this.setState( {error: error.response.data.error } );
+      this.setState({fail: true})
     }
+  }
+
+  closeSubmitWindow = () => {
+    this.setState({error: null})
+    this.setState({fail: false})
   }
 
   render() {
@@ -46,39 +55,49 @@ class SignInForm extends Component {
     
     return (
       <div>
-        <div className="loginBackground">
-          <h1 className="loginHeader">LOG IN</h1>
-          <form onSubmit={this.onSubmit}>
-            <div className="emailBar">
-              <input
-                className="textBox"
+        <h1 className="login"> Login </h1>
+        <div className="login-div">
+          <Form className="login-form" onSubmit={this.onSubmit}>
+            <Modal open={ this.state.fail } onClose={ this.closeSubmitWindow } basic size="small">
+              <Header icon="warning circle" content="Error" />
+              <Modal.Content>
+                <h3>{ this.state.error }</h3>
+              </Modal.Content>
+              <Modal.Actions>
+                <Button color='green' onClick={ this.closeSubmitWindow } inverted>
+                  <Icon name="checkmark" /> OK
+                </Button>
+              </Modal.Actions>
+            </Modal>
+            <Form.Field required>
+              <label>Email:</label>
+              <Form.Input
                 value={email}
                 onChange={event => this.setState({email: event.target.value})}
-                type="text"
-                placeholder="Email Address"
+                type="email"
+                autoComplete='email'
+                placeholder='Email'
               />
-            </div>
-
-            <div className="emailBar">
-              <input
-                className="textBoxPass"
+            </Form.Field>
+            <br />
+            <Form.Field required>
+              <label>Password:</label>
+              <Form.Input
                 value={password}
                 onChange={event => this.setState({password: event.target.value})}
                 type="password"
-                placeholder="Password"
+                autoComplete='new-password'
+                placeholder='Password'
               />
+            </Form.Field>
+            <br />
+            <SignUpLink />
+            <div className="wrapper">
+              <Form.Button type="button" disabled={isInvalid} type="submit"> Login </Form.Button>
             </div>
-            <div className="centerLogIn">
-              <button 
-                className="signInButton"
-                disabled={isInvalid} type="submit">
-                Log In
-              </button>
-            </div>
-            { error && <p>{error.message}</p> }
-          </form>
-          <SignUpLink />
+          </Form>
         </div>
+        { error && <p>{error}</p> }
       </div>
     );
   }
