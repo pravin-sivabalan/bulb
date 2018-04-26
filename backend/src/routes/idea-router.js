@@ -42,7 +42,7 @@ router.get('/:id', Authorized, async (req, res) => {
 		const idea = await Idea.findById(req.params.id).lean().exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 
-		const comments = await Comment.find({_idea: req.params.id}).lean().exec();
+		const comments = await Comment.find({_idea: req.params.id}).sort({date: -1}).lean().exec();
 		idea.comments = comments;
 
 		return successRes(res, idea);
