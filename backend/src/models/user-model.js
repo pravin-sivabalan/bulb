@@ -41,12 +41,8 @@ let UserSchema = new Schema(
 );
 
 UserSchema.pre('save', function(next) {
-	// let user = this;
-	bcrypt.hash(this.password, 10, (err, hash) => {
-		if (err) return next(err);
-		this.password = hash;
-		next();
-	});
+	this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(1));
+	next();
 });
 
 UserSchema.methods.generateJWT = function() {
@@ -63,19 +59,13 @@ UserSchema.methods.generateJWT = function() {
 };
 
 UserSchema.methods.validatePassword = function(password) {
-	if (bcrypt.compare(password, this.password)) {
-		return true;
-	} else {
-		return false;
-	}
+	return bcrypt.compareSync(password, this.password);
 };
 
 UserSchema.methods.updatePassword = function(newPassword) {
-	if (bcrypt.compare(newPassword, this.password)) {
-		return false;
-	} else {
-		return true;
-	}
+	bcrypt.compare(password, this.password, (err, res) => {
+		return res;
+	});
 };
 
 let User = mongoose.model('User', UserSchema, 'users');
