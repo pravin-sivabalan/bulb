@@ -27,7 +27,7 @@ router.get('/', Authorized, async (req, res) => {
 		}
 		else return errorRes(res, 400, `Invalid feed type: ${req.query.type}`);
 
-		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).lean().exec();
+		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).sort({date: -1}).lean().exec();
 		ideas.forEach((idea) => idea.userHasLiked = currentUser.likedIdeas.includes(idea._id));
 
 		return successRes(res, ideas);
