@@ -3,7 +3,7 @@ const express = require('express');
 const User = require('../models/user-model');
 const Idea = require('../models/idea-model');
 const Comment = require('../models/comment-model');
-const Authorized = require('../utils/middleware');
+const Authorized = require('../utils/middeware');
 const router = express.Router();
 
 router.get('/', Authorized, async (req, res) => {
@@ -28,12 +28,7 @@ router.get('/', Authorized, async (req, res) => {
 		}
 		else return errorRes(res, 400, `Invalid feed type: ${req.query.type}`);
 
-		const ideas = await Idea
-			.find(query)
-			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.sort({date: -1})
-			.lean()
-			.exec();
+		const ideas = await Idea.find(query).populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes']).sort({date: -1}).lean().exec();
 		ideas.forEach((idea) => idea.userHasLiked = currentUser.likedIdeas.includes(idea._id));
 
 		return successRes(res, ideas);
@@ -44,18 +39,10 @@ router.get('/', Authorized, async (req, res) => {
 
 router.get('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea
-			.findById(req.params.id)
-			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.lean()
-			.exec();
+		const idea = await Idea.findById(req.params.id).lean().exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 
-		const comments = await Comment
-			.find({_idea: req.params.id})
-			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.lean()
-			.exec();
+		const comments = await Comment.find({_idea: req.params.id}).sort({date: -1}).lean().exec();
 		idea.comments = comments;
 
 		return successRes(res, idea);
@@ -109,11 +96,13 @@ router.put('/like/:id', Authorized, async (req, res) => {
 		const idea = await Idea.find({_id: req.params.id}).exec();
 		if(!idea) return errorRes(res, 404, 'Idea not found');
 
-		const user = await User.findByIdAndUpdate(req.user.id, {$push: {'likedIdeas': idea._id}},{safe: true, upsert: true, new : true}).exec();
-		if(!user) return errorRes(res, 404, 'User does not exist');
+		const user = await User.findById(req.user.id).exec();
+		if(user.likedIdeas.includes(idea._id)) return errorRes(res, 409, 'User has already liked this idea');
 
+		user.likedIdeas.push(idea._id);
 		idea.likes += 1;
 
+		const updatedUser = await user.save();
 		const updatedIdea = await idea.save();
 		let updatedIdeaObject = updatedIdea.toObject();
 		updatedIdeaObject.userHasLiked = true;
@@ -144,35 +133,22 @@ router.put('/unlike/:id', Authorized, async (req, res) => {
 	}
 });
 
-router.post('/comment/:id', Authorized, async (req, res) => {
-	if(!req.params.id) return errorRes(res, 400, 'No idea id found in body');
+router.post('/comment', Authorized, async (req, res) => {
+	if(!req.body.ideaId) return errorRes(res, 400, 'No idea id found in body');
 	if(!req.body.comment) return errorRes(res, 400, 'No comment found in body');
 
 	try {
-		// const idea = Idea.findById(req.params.id).exec();
-		let idea = Idea.findById(req.params.id).exec();
+		const idea = Idea.findById(req.body.ideaId).exec();
 		if(!idea) return errorRes('Idea does not exist');
 
 		const comment = Comment({
 			_user: req.user.id,
-			_idea: req.params.id,
+			_idea: req.body.ideaId,
 			comment: req.body.comment
 		});
 
-		// const newComment = await comment.save();
-		await comment.save();
-		// return successRes(res, newComment);
-		idea = await Idea
-			.findById(req.params.id)
-			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.lean()
-			.exec();
-		if (!idea) return errorRes(res, 404, 'Idea not found');
-
-		const comments = await Comment.find({_idea: req.params.id}).lean().exec();
-		idea.comments = comments;
-
-		return successRes(res, idea);
+		const newComment = await comment.save();
+		return successRes(res, newComment);
 	} catch(error) {
 		return errorRes(res, 500, error);
 	}
