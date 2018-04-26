@@ -6,7 +6,7 @@ import axios from 'axios';
 import { setAuthUser, createUser } from '../../actions'
 import * as routes from '../../constants';
 import { Form, Button, Icon, Header } from 'semantic-ui-react';
-// import './index.css'
+import './index.css'
 
 class SignUpPage extends Component {
   constructor(props) {
@@ -20,7 +20,7 @@ class SignUpPage extends Component {
       </div>
     )
   }
-  
+
 }
 
 const INITIAL_STATE = {
@@ -74,11 +74,11 @@ class SignUpForm extends Component {
       <div>
         <h1 className="signup"> Sign Up </h1>
         <div className="signup-div">
-          <Form className="signup-form" onSubmit={this.onSubmit}> 
+          <Form className="signup-form" onSubmit={this.onSubmit}>
             <Form.Field required>
               <label>First Name:</label>
-              <Form.Input 
-                value={firstName} 
+              <Form.Input
+                value={firstName}
                 onChange={event => this.setState({firstName: event.target.value})}
                 type="text"
                 autoComplete='given-name'
@@ -88,8 +88,8 @@ class SignUpForm extends Component {
             <br />
             <Form.Field required>
               <label>Last Name:</label>
-              <Form.Input 
-                value={lastName} 
+              <Form.Input
+                value={lastName}
                 onChange={event => this.setState({lastName: event.target.value})}
                 type="text"
                 autoComplete='family-name'
@@ -99,8 +99,8 @@ class SignUpForm extends Component {
             <br />
             <Form.Field required>
               <label>Email:</label>
-              <Form.Input 
-                value={email} 
+              <Form.Input
+                value={email}
                 onChange={event => this.setState({email: event.target.value})}
                 type="email"
                 autoComplete='email'
@@ -110,8 +110,8 @@ class SignUpForm extends Component {
             <br />
             <Form.Field required>
               <label>Password:</label>
-              <Form.Input 
-                value={passwordOne} 
+              <Form.Input
+                value={passwordOne}
                 onChange={event => this.setState({passwordOne: event.target.value})}
                 type="password"
                 autoComplete='new-password'
@@ -121,8 +121,8 @@ class SignUpForm extends Component {
             <br />
             <Form.Field>
               <label>Confirm Password:</label>
-              <Form.Input 
-                value={passwordTwo} 
+              <Form.Input
+                value={passwordTwo}
                 onChange={event => this.setState({passwordTwo: event.target.value})}
                 type="password"
                 autoComplete='new-password'
@@ -153,4 +153,3 @@ export default compose(
   withRouter,
   connect(null, { createUser }),
 )(SignUpPage);
-
