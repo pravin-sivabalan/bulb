@@ -5,7 +5,9 @@ export const PASSWORD_FORGET = '/pw-forget';
 export const ACCOUNT = '/account';
 export const SETTINGS = '/settings';
 export const CREATE_IDEA = '/ideas/create';
-export const DISPLAY_IDEAS = '/ideas'
+export const DISPLAY_IDEAS = '/ideas';
+export const USER = '/user/:userid';
+export const IDEA = '/idea/:id';
 export const authCondition = (authUser) => !!authUser;
 export default {
 	SIGN_UP,
@@ -16,5 +18,7 @@ export default {
 	SETTINGS,
 	CREATE_IDEA,
 	DISPLAY_IDEAS,
+	USER,
+	IDEA,
 	authCondition
 }
