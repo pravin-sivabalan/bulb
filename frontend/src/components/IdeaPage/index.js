@@ -44,11 +44,16 @@ class IdeaPage extends Component {
       if (!idea) return <div>Loading...</div>;
 
       return (
-         <Container>
+         <Container style={{ marginTop: '30px' }}>
             <Card.Group>
                <Card fluid>
                   <Card.Content>
-                     <Header dividing >{idea.title}</Header>
+                     <Card.Header dividing >
+                        {idea.title}
+                        <Card.Meta style={{ float: 'right', fontSize:'15px' }}>
+                           Posted by: <Link to={`/user/${idea._user._id}`}>{`${idea._user.firstName} ${idea._user.lastName}`}</Link>
+                        </Card.Meta>
+                     </Card.Header>
                      <Card.Content description={idea.description} />
                      <Card.Content extra>
                         <Button compact floated='left' size='small' as='div' labelPosition='right'>
