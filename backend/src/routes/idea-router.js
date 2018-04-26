@@ -2,7 +2,8 @@ const { successRes, errorRes } = require('../utils');
 const express = require('express');
 const User = require('../models/user-model');
 const Idea = require('../models/idea-model');
-const Authorized = require('../utils/middleware');
+const Comment = require('../models/comment-model');
+const Authorized = require('../utils/middeware');
 const router = express.Router();
 
 router.get('/', Authorized, async (req, res) => {
@@ -38,8 +39,12 @@ router.get('/', Authorized, async (req, res) => {
 
 router.get('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).exec();
+		const idea = await Idea.findById(req.params.id).lean().exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
+
+		const comments = await Comment.find({_idea: req.params.id}).lean().exec();
+		idea.comments = comments;
+
 		return successRes(res, idea);
 	} catch (error) {
 		return errorRes(res, 500, error);
@@ -122,6 +127,27 @@ router.put('/unlike/:id', Authorized, async (req, res) => {
 
 		return successRes(res, updatedIdeaObject);
 	} catch (error) {
+		return errorRes(res, 500, error);
+	}
+});
+
+router.post('/comment', Authorized, async (req, res) => {
+	if(!req.body.ideaId) return errorRes(res, 400, 'No idea id found in body');
+	if(!req.body.comment) return errorRes(res, 400, 'No comment found in body');
+
+	try {
+		const idea = Idea.findById(req.body.ideaId).exec();
+		if(!idea) return errorRes('Idea does not exist');
+
+		const comment = Comment({
+			_user: req.user.id,
+			_idea: req.body.ideaId,
+			comment: req.body.comment
+		});
+
+		const newComment = await comment.save();
+		return successRes(res, newComment);
+	} catch(error) {
 		return errorRes(res, 500, error);
 	}
 });
