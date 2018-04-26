@@ -44,12 +44,14 @@ router.post('/login', async (req, res) => {
 
 		const user = await User.findOne({ email: req.body.email }).exec();
 		if (!user) return errorRes(res, 404, 'Email does not exist');
-		if (user.validatePassword(req.body.password))
+		if (user.validatePassword(req.body.password)) {
 			return successRes(res, {
 				user,
 				token: user.generateJWT(),
 			});
-		else return errorRes(res, 400, 'Invalid password');
+		} else {
+			return errorRes(res, 400, 'Invalid password');
+		}
 	} catch (error) {
 		console.error('Server Error:', error);
 		return errorRes(res, 500, error);
