@@ -101,7 +101,7 @@ class UserPage extends Component {
 						<Header textAlign='center' >Likes:</Header>
 							<Divider/>
 							
-							<ItemGroup style={{overflowY: 'scroll'}}  divided>
+							<ItemGroup divided>
 								{
 									(user && user.likedIdeas && user.likedIdeas.length)?
 										user.likedIdeas.map((idea,i) => <IdeaItem key={i} id={idea._id} type="feed" idea={idea}/>) :

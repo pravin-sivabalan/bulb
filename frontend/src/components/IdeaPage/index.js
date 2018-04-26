@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { Container, Comment, Card, Button, Icon, Label, Header, Form, TextArea } from 'semantic-ui-react';
 import { fetchIdea, createComment } from '../../actions';
-import { IdeaComment } from '../Common';
+import { IdeaComment, IdeaItem } from '../Common';
 import withAuthorization from '../Session/withAuthorization';
 
 class IdeaPage extends Component {
@@ -48,17 +48,8 @@ class IdeaPage extends Component {
             <Card.Group>
                <Card fluid>
                   <Card.Content>
-                     <Header dividing >{idea.title}</Header>
-                     <Card.Content description={idea.description} />
-                     <Card.Content extra>
-                        <Button compact floated='left' size='small' as='div' labelPosition='right'>
-                           <Button compact color='red' size='small' >
-                              <Icon name='heart' />
-                              Like
-                           </Button>
-                           <Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
-                        </Button>
-                     </Card.Content>
+                     <IdeaItem idea={idea} type='feed' />
+                     
                   </Card.Content>
                </Card>
                <Card fluid>

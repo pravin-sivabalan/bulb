@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, Divider, Header } from 'semantic-ui-react';
 
 class IdeaComment extends Component {
@@ -7,7 +8,7 @@ class IdeaComment extends Component {
       return (
          <Card fluid>
             <Card.Content>
-               <Header dividing >{`${comment._user.firstName} ${comment._user.lastName}`}</Header>
+               <Header as={Link} to={`/user/${comment._user._id}`} dividing >{`${comment._user.firstName} ${comment._user.lastName}`}</Header>
                <Card.Content description={comment.comment} />
             </Card.Content>
             <Card.Content extra>
