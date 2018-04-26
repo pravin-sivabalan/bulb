@@ -304,7 +304,7 @@ export const unFollowUser = id => async dispatch => {
 	try {
 		// Get DB user and update Redux store
 		const token = getIdToken();
-		console.log('Following user:', id)
+		console.log('Unfollowing user:', id)
 		const { data: {response} } = await axios.post(
 			`/api/users/unfollow/${id}`, 
 			null,

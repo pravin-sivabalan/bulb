@@ -14,28 +14,38 @@ class UserPage extends Component {
 		this.state = {
 			user: null,
 			feed: [],
+			isFollowing: false,
 			currentUser: this.props.user && this.props.match.params.userid === this.props.user._id
 		}
   }
 
   componentWillMount = async () => {
 	  const id = this.props.match.params.userid;
-		const userInfo = await Promise.all([fetchUser(id), fetchIdeas(id)]);
-		console.log('Got userInfo:', userInfo);
-	  this.setState({user: userInfo[0]});
-	  this.setState({feed: userInfo[1]});
+	  const userInfo = await Promise.all([fetchUser(id), fetchIdeas(id)]);
+	  console.log('Got userInfo:', userInfo);
+	  this.setState({
+		  user: userInfo[0],
+		  feed: userInfo[1],
+		  isFollowing: userInfo[0].followers.includes(this.props.user._id)
+		});
 	}
 	
-	follow = e => this.props.followUser(this.props.match.params.userid);
+	follow = async e => {
+		await this.props.followUser(this.props.match.params.userid);
+		this.setState({isFollowing: true});
+	}
 	
-	unFollow = e => this.props.unFollowUser(this.props.match.params.userid);
+	unFollow = async e => {
+		await this.props.unFollowUser(this.props.match.params.userid);
+		this.setState({isFollowing: false});
+	}
 
   render() {
-		const { user, feed, currentUser } = this.state;
+		const { user, feed, currentUser, isFollowing } = this.state;
 		console.log('UserPage state:', this.state);
 		const followButton = <Button onClick={this.follow} >Follow</Button>;
 		const unFollowButton = <Button onClick={this.unFollow} >Unfollow</Button>;
-		const isFollowing = this.props.user && user && user.followers.includes(this.props.user._id);
+		// const isFollowing = this.props.user && user && user.followers.includes(this.props.user._id);
 
 		const userInfo = !user ? <p>No user info!</p> :
 			<Form>
@@ -59,10 +69,10 @@ class UserPage extends Component {
 				{
 					!currentUser && 
 					(!isFollowing  ? followButton: unFollowButton )
-					}
+				}
 			</Form>
 
-    return (
+	 return (
 			<Grid>
 				<Grid.Column width={4} >
 					<Segment>
@@ -77,7 +87,7 @@ class UserPage extends Component {
 							<Header textAlign='center' >Posts:</Header>
 							<Divider/>
 							
-							<ItemGroup style={{overflowY: 'scroll'}} divided>
+							<ItemGroup divided>
 								{
 									feed && feed.length ?
 										feed.map((idea,i) => <IdeaItem key={i} id={idea._id} type="feed" idea={idea}/>) :
@@ -103,7 +113,7 @@ class UserPage extends Component {
 				</Grid.Column>
 
 			</Grid>
-    );
+	 );
   }
 }
 
