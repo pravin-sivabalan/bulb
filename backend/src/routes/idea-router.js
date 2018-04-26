@@ -39,8 +39,12 @@ router.get('/', Authorized, async (req, res) => {
 
 router.get('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).exec();
+		const idea = await Idea.findById(req.params.id).lean().exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
+
+		const comments = await Comment.find({_idea: req.params.id}).lean().exec();
+		idea.comments = comments;
+
 		return successRes(res, idea);
 	} catch (error) {
 		return errorRes(res, 500, error);
