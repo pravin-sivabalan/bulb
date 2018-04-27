@@ -9,9 +9,9 @@ import { deleteIdea, likeIdea, unLikeIdea } from '../../actions';
 class IdeaItem extends Component {
 	constructor(props) {
 		super(props);
-		const liked = this.props.user.likes.find(like => like._id === this.props.idea._id);
+		const liked = this.props.user && this.props.user.likes.find(like => like._id === this.props.idea._id);
 		const { likes } = this.props.idea;
-		const sameUser = this.props.user._id == this.props.idea._user._id;
+		const sameUser = this.props.user && this.props.user._id == this.props.idea._user._id;
 		this.state = {
 			liked: liked ? true : false,
 			likes,
