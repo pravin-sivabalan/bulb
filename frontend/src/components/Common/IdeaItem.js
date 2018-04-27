@@ -6,16 +6,15 @@ import { compose } from 'recompose';
 import { authCondition } from '../../constants';
 import { deleteIdea, likeIdea, unLikeIdea } from '../../actions';
 import withAuthorization from '../Session/withAuthorization';
-import { unlink } from 'fs';
 
 class IdeaItem extends Component {
 	constructor(props) {
 		super(props);
-		console.log('IdeaItem props:', this.props);
 		const liked = this.props.user.likes.includes(this.props.idea._id);
-		console.log('Idea liked:', liked);
+		const sameUser = this.props.user._id == this.props.idea._user._id;
 		this.state = {
-			liked
+			liked,
+			sameUser
 		}
 	}
 	
@@ -38,7 +37,6 @@ class IdeaItem extends Component {
 	render() {
 		const { idea, type } = this.props;
 		const { liked } = this.state;
-		console.log('Idea item idea:', idea);
 
 		const likeButton = 
 			<Button onClick={this.handleLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
@@ -67,7 +65,10 @@ class IdeaItem extends Component {
 				<Card.Content description={idea.description} />
 				</Card.Content>
 				<Card.Content extra >
-					{liked ? unLikeButton : likeButton}
+					{
+						(!this.state.sameUser) &&
+						(liked ? unLikeButton : likeButton)
+						}
 					{
 						type === 'user' ?		
 							<Button color='red' compact size='medium' floated='right' style={{marginTop: 0}} onClick={this.onClick}>X</Button> : 
