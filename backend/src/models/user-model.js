@@ -31,7 +31,7 @@ let UserSchema = new Schema(
 			ref: 'User',
 			default: [],
 		},
-		likedIdeas: {
+		likes: {
 			type: [mongoose.Schema.ObjectId],
 			ref: 'Idea',
 			default: []
@@ -63,7 +63,9 @@ UserSchema.methods.validatePassword = function(password) {
 };
 
 UserSchema.methods.updatePassword = function(newPassword) {
-	return bcrypt.compareSync(password, this.password);
+	// return bcrypt.compareSync(password, this.password);
+	this.password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(1));
+	return this.password;
 };
 
 let User = mongoose.model('User', UserSchema, 'users');
