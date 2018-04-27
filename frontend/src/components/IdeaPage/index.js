@@ -44,12 +44,11 @@ class IdeaPage extends Component {
       if (!idea) return <div>Loading...</div>;
 
       return (
-         <Container>
+         <Container style={{ marginTop: '30px' }}>
             <Card.Group>
                <Card fluid>
                   <Card.Content>
                      <IdeaItem idea={idea} type='feed' />
-                     
                   </Card.Content>
                </Card>
                <Card fluid>

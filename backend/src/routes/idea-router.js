@@ -44,18 +44,10 @@ router.get('/', Authorized, async (req, res) => {
 
 router.get('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea
-			.findById(req.params.id)
-			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.lean()
-			.exec();
+		const idea = await Idea.findById(req.params.id).lean().exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 
-		const comments = await Comment
-			.find({_idea: req.params.id})
-			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.lean()
-			.exec();
+		const comments = await Comment.find({_idea: req.params.id}).sort({date: -1}).lean().exec();
 		idea.comments = comments;
 
 		return successRes(res, idea);
@@ -110,9 +102,12 @@ router.get('/user/:id', async (req, res) => {
 router.post('/like/:id', Authorized, async (req, res) => {
 	try {
 		const idea = await Idea.findById({_id: req.params.id}).exec();
-		if(!idea) return errorRes(res, 404, 'Idea not found');
+		if (!idea) return errorRes(res, 404, 'Idea not found');
+		let user = await User.findById(req.user.id).exec();
+		if (!user) return errorRes(res, 404, 'User does not exist');
+		if (user.likes.includes(idea._id)) return errorRes(res, 409, 'User has already liked this idea');
 
-		const user = await User
+		user = await User
 			.findByIdAndUpdate(
 				req.user.id, 
 				{
@@ -127,7 +122,6 @@ router.post('/like/:id', Authorized, async (req, res) => {
 				}
 			)
 			.exec();
-		if(!user) return errorRes(res, 404, 'User does not exist');
 
 		const newIdea = await Idea
 			.findOneAndUpdate({ _id: req.params.id }, { $inc: { likes: 1 } }, {new: true })
@@ -139,31 +133,30 @@ router.post('/like/:id', Authorized, async (req, res) => {
 			user
 		});
 	} catch (error) {
+		console.error(error);
 		return errorRes(res, 500, error);
 	}
 });
 
 router.post('/unlike/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.find({_id: req.params.id}).exec();
+		const idea = await Idea.findById(req.params.id).exec();
 		if(!idea) return errorRes(res, 404, 'Idea not found');
+		let user = await User.findById(req.user.id).exec();
+		let alreadyLiked = false;
+		user.likes.forEach(like => {
+			if (like == req.params.id) alreadyLiked = true;
+		});
+		if (!alreadyLiked) return errorRes(res, 409, 'User did not liked this idea');
 
-		const user = await User.findByIdAndUpdate(req.user.id, {$pull: {'likes': idea._id}}).exec();
+		user = await User.findByIdAndUpdate(req.user.id, {$pull: {'likes': idea._id}}).exec();
 		if(!user) return errorRes(res, 404, 'User does not exist');
-
-		// idea.likes -= 1;
-
-		// const updatedIdea = await idea.save();
-		// let updatedIdeaObject = updatedIdea.toObject();
-		// updatedIdeaObject.userHasLiked = false;
 
 		const newIdea = await Idea
 			.findOneAndUpdate({ _id: req.params.id }, { $inc: { likes: -1 } }, {new: true })
 			.populate('_user', ['_id', 'firstName', 'lastName', 'email'])
 			.exec();
 
-		// return successRes(res, updatedIdeaObject);
-		// return successRes(res, newIdea);
 		return successRes(res, {
 			idea: newIdea,
 			user
@@ -173,35 +166,22 @@ router.post('/unlike/:id', Authorized, async (req, res) => {
 	}
 });
 
-router.post('/comment/:id', Authorized, async (req, res) => {
-	if(!req.params.id) return errorRes(res, 400, 'No idea id found in body');
+router.post('/comment', Authorized, async (req, res) => {
+	if(!req.body.ideaId) return errorRes(res, 400, 'No idea id found in body');
 	if(!req.body.comment) return errorRes(res, 400, 'No comment found in body');
 
 	try {
-		// const idea = Idea.findById(req.params.id).exec();
-		let idea = Idea.findById(req.params.id).exec();
+		const idea = Idea.findById(req.body.ideaId).exec();
 		if(!idea) return errorRes('Idea does not exist');
 
 		const comment = Comment({
 			_user: req.user.id,
-			_idea: req.params.id,
+			_idea: req.body.ideaId,
 			comment: req.body.comment
 		});
 
-		// const newComment = await comment.save();
-		await comment.save();
-		// return successRes(res, newComment);
-		idea = await Idea
-			.findById(req.params.id)
-			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.lean()
-			.exec();
-		if (!idea) return errorRes(res, 404, 'Idea not found');
-
-		const comments = await Comment.find({_idea: req.params.id}).lean().exec();
-		idea.comments = comments;
-
-		return successRes(res, idea);
+		const newComment = await comment.save();
+		return successRes(res, newComment);
 	} catch(error) {
 		return errorRes(res, 500, error);
 	}

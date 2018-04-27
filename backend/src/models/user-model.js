@@ -41,7 +41,9 @@ let UserSchema = new Schema(
 );
 
 UserSchema.pre('save', function(next) {
-	this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(1));
+	if(this.password && this.isModified('password')) {
+		this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(1));
+	}
 	next();
 });
 
