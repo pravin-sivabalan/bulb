@@ -31,7 +31,8 @@ router.get('/', Authorized, async (req, res) => {
 		const ideas = await Idea
 			.find(query)
 			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
-			.sort({date: -1})
+			// .sort({date: -1})
+			.sort({createdAt: -1})
 			.lean()
 			.exec();
 		// ideas.forEach((idea) => idea.userHasLiked = currentUser.likes.includes(req.params.id));
