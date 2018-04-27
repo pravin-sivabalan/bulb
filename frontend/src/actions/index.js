@@ -343,22 +343,6 @@ export const fetchFeed = async type => {
 	}
 }
 
-
-export const signIn = (email, password) => async dispatch => {
-	const { data } = await axios.post('/api/auth/login', {email, password});
-	console.log('Sign in returned data:', data.response);
-	dispatch(onSetAuthToken(data.response.token));
-	dispatch(onSetDBUser(data.response.user));
-	return data;
-}
-
-export const signOut = () => dispatch => {
-	console.log('Signing out');
-	dispatch(onSetAuthToken(null));
-	dispatch(onSetDBUser(null));
-	console.log('Signed out');
-}
-
 export const followUser = id => async dispatch => {
 	try {
 		// Get DB user and update Redux store
@@ -399,11 +383,27 @@ export const unFollowUser = id => async dispatch => {
 	}
 }
 
+export const signIn = (email, password) => async dispatch => {
+	const { data } = await axios.post('/api/auth/login', {email, password});
+	console.log('Sign in returned data:', data.response);
+	dispatch(onSetAuthToken(data.response.token));
+	dispatch(onSetDBUser(data.response.user));
+	return data;
+}
+
+export const signOut = () => dispatch => {
+	console.log('Signing out');
+	dispatch(onSetAuthToken(null));
+	dispatch(onSetDBUser(null));
+	console.log('Signed out');
+}
+
 export const getIdToken = () => localStorage.getItem('token');
 
 export const getCurrentUser = () => JSON.parse(localStorage.getItem('user'));
 
 export const localStorageChanged = (e) => (dispatch, getState) => {
+	console.log('Local storage changed event:', e);
 	dispatch(onSetAuthToken(getIdToken()));
 	dispatch(onSetDBUser(getCurrentUser()));
 }

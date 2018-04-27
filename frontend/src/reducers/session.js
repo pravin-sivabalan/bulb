@@ -13,13 +13,19 @@ function sessionReducer(state = {
       }
     }
     case DB_USER_SET : {
-      action.user ? localStorage.setItem('user', JSON.stringify(action.user)) : localStorage.removeItem('user')
+      action.user ? localStorage.setItem('user', JSON.stringify(action.user)) : localStorage.removeItem('user');
+      if (action.user)
+        return {
+          ...state,
+          user: {
+            ...state.user,
+            ...action.user
+          }
+        }
+      else
       return {
         ...state,
-        user: {
-          ...state.user,
-          ...action.user
-        }
+        user: null
       }
     }
     default : return state;

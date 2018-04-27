@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Navigation from '../Navigation';
 import SignUpPage from '../SignUp';
 import SignInPage from '../SignIn';
@@ -36,7 +36,7 @@ class App extends React.Component {
             <Route exact path={routes.CREATE_IDEA} component={CreateIdeaPage} />
             <Route exact path={routes.USER} component={UserPage} />
             <Route exact path={routes.IDEA} component={IdeaPage} />
-            <Route component={({ location }) => <h3> No match for <code>{location.pathname}</code></h3>} />
+            <Route component={() => <Redirect to={routes.HOME} />} />
           </Switch>
           <hr/>
         </div>
