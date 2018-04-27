@@ -71,7 +71,7 @@ class SignUpForm extends Component {
       email === '';
 
     return (
-      <div>
+      <div style={{ marginTop:'20px' }}>
         <h1 className="signup"> Sign Up </h1>
         <div className="signup-div">
           <Form className="signup-form" onSubmit={this.onSubmit}>

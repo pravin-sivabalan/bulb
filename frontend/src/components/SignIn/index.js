@@ -6,6 +6,7 @@ import { SignUpLink } from '../Common';
 import { signIn } from '../../actions';
 import * as routes from '../../constants';
 import { Form, Button, Icon, Header, Modal } from 'semantic-ui-react';
+import './index.css'
 
 class SignInPage extends Component {
   render = () =>
@@ -53,7 +54,7 @@ class SignInForm extends Component {
 
     
     return (
-      <div>
+      <div style={{ marginTop:'20px' }}>
         <h1 className="login"> Login </h1>
         <div className="login-div">
           <Form className="login-form" onSubmit={this.onSubmit}>
