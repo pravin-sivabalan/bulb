@@ -34,7 +34,7 @@ router.get('/', Authorized, async (req, res) => {
 			.sort({date: -1})
 			.lean()
 			.exec();
-		ideas.forEach((idea) => idea.userHasLiked = currentUser.likes.includes(idea._id));
+		ideas.forEach((idea) => idea.userHasLiked = currentUser.likes.includes(req.params.id));
 
 		return successRes(res, ideas);
 	} catch (error) {
@@ -44,10 +44,18 @@ router.get('/', Authorized, async (req, res) => {
 
 router.get('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).lean().exec();
+		const idea = await Idea
+			.findById(req.params.id)
+			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
+			.lean()
+			.exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 
-		const comments = await Comment.find({_idea: req.params.id}).sort({date: -1}).lean().exec();
+		const comments = await Comment
+			.find({_idea: req.params.id})
+			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
+			.lean()
+			.exec();
 		idea.comments = comments;
 
 		return successRes(res, idea);
@@ -58,7 +66,10 @@ router.get('/:id', Authorized, async (req, res) => {
 
 router.delete('/:id', Authorized, async (req, res) => {
 	try {
-		const idea = await Idea.findById(req.params.id).exec();
+		const idea = await Idea
+			.findById(req.params.id)
+			.populate('_user', ['_id', 'firstName', 'lastName', 'email'])
+			.exec();
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 		if (req.user.id !== idea._user) return errorRes(res, 401, 'User is unauthorized to delete this idea');
 		const oldIdea = await idea.remove();
@@ -105,14 +116,14 @@ router.post('/like/:id', Authorized, async (req, res) => {
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 		let user = await User.findById(req.user.id).exec();
 		if (!user) return errorRes(res, 404, 'User does not exist');
-		if (user.likes.includes(idea._id)) return errorRes(res, 409, 'User has already liked this idea');
+		if (user.likes.includes(req.params.id)) return errorRes(res, 409, 'User has already liked this idea');
 
 		user = await User
 			.findByIdAndUpdate(
 				req.user.id, 
 				{
 					$push: {
-						'likes': idea._id
+						'likes': req.params.id
 					}
 				},
 				{
@@ -149,7 +160,7 @@ router.post('/unlike/:id', Authorized, async (req, res) => {
 		});
 		if (!alreadyLiked) return errorRes(res, 409, 'User did not liked this idea');
 
-		user = await User.findByIdAndUpdate(req.user.id, {$pull: {'likes': idea._id}}).exec();
+		user = await User.findByIdAndUpdate(req.user.id, {$pull: {'likes': req.params.id}}).exec();
 		if(!user) return errorRes(res, 404, 'User does not exist');
 
 		const newIdea = await Idea
@@ -166,22 +177,35 @@ router.post('/unlike/:id', Authorized, async (req, res) => {
 	}
 });
 
-router.post('/comment', Authorized, async (req, res) => {
-	if(!req.body.ideaId) return errorRes(res, 400, 'No idea id found in body');
+router.post('/comment/:id', Authorized, async (req, res) => {
+	if(!req.params.id) return errorRes(res, 400, 'No idea id found in body');
 	if(!req.body.comment) return errorRes(res, 400, 'No comment found in body');
 
 	try {
-		const idea = Idea.findById(req.body.ideaId).exec();
+		// const idea = Idea.findById(req.params.id).exec();
+		let idea = Idea.findById(req.params.id).exec();
 		if(!idea) return errorRes('Idea does not exist');
 
 		const comment = Comment({
 			_user: req.user.id,
-			_idea: req.body.ideaId,
+			_idea: req.params.id,
 			comment: req.body.comment
 		});
 
-		const newComment = await comment.save();
-		return successRes(res, newComment);
+		// const newComment = await comment.save();
+		await comment.save();
+		// return successRes(res, newComment);
+		idea = await Idea
+			.findById(req.params.id)
+			.populate('_user', ['_id', 'firstName', 'lastName', 'email', 'likes'])
+			.lean()
+			.exec();
+		if (!idea) return errorRes(res, 404, 'Idea not found');
+
+		const comments = await Comment.find({_idea: req.params.id}).lean().exec();
+		idea.comments = comments;
+
+		return successRes(res, idea);
 	} catch(error) {
 		return errorRes(res, 500, error);
 	}

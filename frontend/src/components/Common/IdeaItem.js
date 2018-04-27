@@ -11,9 +11,11 @@ class IdeaItem extends Component {
 	constructor(props) {
 		super(props);
 		const liked = this.props.user.likes.includes(this.props.idea._id);
+		const { likes } = this.props.idea;
 		const sameUser = this.props.user._id == this.props.idea._user._id;
 		this.state = {
 			liked,
+			likes,
 			sameUser
 		}
 	}
@@ -25,37 +27,41 @@ class IdeaItem extends Component {
 
 	handleLike = async e => {
 		await this.props.likeIdea(this.props.idea._id);
-		this.setState({liked: true});
+		this.setState({
+			liked: true,
+			likes: this.state.likes+1
+		});
 	}
 
 	handleUnLike = async e => {
 		console.log('Unliking idea');
 		await this.props.unLikeIdea(this.props.idea._id);
-		this.setState({liked: false});
+		this.setState({
+			liked: false,
+			likes: this.state.likes-1
+		});
 	}
 
 	render() {
 		const { idea, type } = this.props;
-		const { liked } = this.state;
+		const { liked, likes, sameUser } = this.state;
 
 		const likeButton = 
 			<Button onClick={this.handleLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
 				<Button compact color='red' size='small' >
-					{/* <Icon name='heart' /> */}
 					<Icon name='empty heart' />
 					Like
 				</Button>
-				<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
+				<Label as='a' basic color='red' pointing='left'>{likes}</Label>
 			</Button>
 
 		const unLikeButton = 
 			<Button onClick={this.handleUnLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
 				<Button compact color='red' size='small' >
-					{/* <Icon name='heart' /> */}
 					<Icon name='heart' />
 					Unlike
 				</Button>
-				<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
+				<Label as='a' basic color='red' pointing='left'>{likes}</Label>
 			</Button>
 
 		return (
@@ -66,9 +72,9 @@ class IdeaItem extends Component {
 				</Card.Content>
 				<Card.Content extra >
 					{
-						(!this.state.sameUser) &&
+						(!sameUser) &&
 						(liked ? unLikeButton : likeButton)
-						}
+					}
 					{
 						type === 'user' ?		
 							<Button color='red' compact size='medium' floated='right' style={{marginTop: 0}} onClick={this.onClick}>X</Button> : 
