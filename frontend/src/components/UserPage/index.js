@@ -73,8 +73,8 @@ class UserPage extends Component {
 			</Form>
 
 	 return (
-			<Grid>
-				<Grid.Column width={4} >
+			<Grid centered only='mobile'>
+				<Grid.Column computer={4} mobile={12}>
 					<Segment>
 					<Header textAlign='center'>User Info:</Header>
 						<Container>
@@ -82,7 +82,7 @@ class UserPage extends Component {
 						</Container>
 					</Segment>
 				</Grid.Column>
-				<Grid.Column width={8} >
+				<Grid.Column computer={8} mobile={12}>
 					<Segment>
 							<Header textAlign='center' >Posts:</Header>
 							<Divider/>
@@ -96,7 +96,7 @@ class UserPage extends Component {
 							</ItemGroup>
 					</Segment>
 				</Grid.Column>
-				<Grid.Column width={4} >
+				<Grid.Column computer={4} mobile={12}>
 					<Segment>
 						<Header textAlign='center' >Likes:</Header>
 							<Divider/>
