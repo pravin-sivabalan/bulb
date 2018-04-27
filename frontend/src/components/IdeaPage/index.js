@@ -26,9 +26,8 @@ class IdeaPage extends Component {
          console.log('Got idea:', idea);
          this.setState({
             idea,
-            liked: this.props.user.likes.includes(idea._id)
+            liked: this.props.user.likes.find(like => like._id === idea._id)
          });
-         // const liked = this.props.user.likes.includes(idea._id);
       } catch (error) {
          this.setState({error});
       }
@@ -62,17 +61,16 @@ class IdeaPage extends Component {
    handleSubmit = async e => {
       const id = this.props.match.params.id;
       const { comment } = this.state;
-      // console.log('Going to comment:', comment);
       const idea = await createComment(id, comment);
       this.setState({idea: idea})
    }
 
   render() {
-      console.log('IdeaPage state:', this.state);
+    console.log('IdeaPage state:', this.state);
 		const { idea, liked } = this.state;      
-      if (!idea) return <div>Loading...</div>;
-      const sameUser = this.props.user._id === idea._user._id;
-		console.log('Idea Item props:', idea);
+    if (!idea) return <div>Loading...</div>;
+    const sameUser = this.props.user._id === idea._user._id;
+		console.log('IdeaPage props:', this.props);
 
 		const likeButton = 
 			<Button onClick={this.handleLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
@@ -135,8 +133,11 @@ class IdeaPage extends Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+	user: state.sessionState.user
+});
+
 export default compose(
-	withRouter,
 	withAuthorization(),
-	connect(null, { likeIdea, unLikeIdea })
+	connect(mapStateToProps, { likeIdea, unLikeIdea })
 )(IdeaPage);

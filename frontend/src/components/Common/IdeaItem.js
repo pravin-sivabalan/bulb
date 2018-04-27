@@ -5,16 +5,15 @@ import { Card, Header, Button, Icon, Label, Item, Container, Divider } from 'sem
 import { compose } from 'recompose';
 import { authCondition } from '../../constants';
 import { deleteIdea, likeIdea, unLikeIdea } from '../../actions';
-import withAuthorization from '../Session/withAuthorization';
 
 class IdeaItem extends Component {
 	constructor(props) {
 		super(props);
-		const liked = this.props.user.likes.includes(this.props.idea._id);
+		const liked = this.props.user.likes.find(like => like._id === this.props.idea._id);
 		const { likes } = this.props.idea;
 		const sameUser = this.props.user._id == this.props.idea._user._id;
 		this.state = {
-			liked,
+			liked: liked ? true : false,
 			likes,
 			sameUser
 		}
@@ -46,9 +45,11 @@ class IdeaItem extends Component {
 
 	render() {
 		const { idea, type } = this.props;
-		const { likes, sameUser } = this.state;
-		const liked = this.props.user.likes.includes(this.props.idea._id);
-		console.log('Idea Item props:', idea);
+		const { likes, sameUser, liked } = this.state;
+		// const liked = this.props.user.likes.includes(this.props.idea._id);
+		// const liked = this.props.user.likes.find(like => like._id === this.props.idea._id);
+		console.log('Idea Item props:', this.props);
+		console.log('Idea Item state:', this.state);
 
 		const likeButton = 
 			<Button onClick={this.handleLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
@@ -94,7 +95,10 @@ class IdeaItem extends Component {
 	}
 }
 
+const mapStateToProps = (state) => ({
+	user: state.sessionState.user
+});
+
 export default compose(
-	withAuthorization(),
-	connect(null, { deleteIdea, likeIdea, unLikeIdea })
+	connect(mapStateToProps, { deleteIdea, likeIdea, unLikeIdea })
 )(IdeaItem);
