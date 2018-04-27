@@ -13,6 +13,7 @@ class HomePage extends Component {
     this.props.fetchGlobalFeed();
     this.props.fetchFollowFeed();
     this.props.fetchUserFeed();
+    this.props.fetchDBUser();
   }
 
   handleChange = (e, data) => {

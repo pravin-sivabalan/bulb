@@ -165,7 +165,7 @@ export const fetchDBUser = () => {
 		else {
 			try {
 				// Get DB user and update Redux store
-				const user = await fetchUser();
+				const user = await fetchUser(getCurrentUser()._id);
 				dispatch(onSetDBUser(user));
 				return user;
 			} catch (error) {
@@ -313,7 +313,7 @@ export const unLikeIdea = id => async dispatch => {
 			null,
 			{headers: {"Authorization" : `Bearer ${token}`}}
 		)
-		console.log('Got idea after liking:', data.response);
+		console.log('Got idea after unliking:', data.response);
 		dispatch(onSetDBUser(data.response.user));
 		dispatch(onIdeaUpdated(data.response.idea));
 		return data.response;

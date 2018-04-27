@@ -31,6 +31,7 @@ class IdeaItem extends Component {
 			liked: true,
 			likes: this.state.likes+1
 		});
+		console.log('IdeaItem liked an idea');
 	}
 
 	handleUnLike = async e => {
@@ -40,11 +41,14 @@ class IdeaItem extends Component {
 			liked: false,
 			likes: this.state.likes-1
 		});
+		console.log('IdeaItem disliked an idea');
 	}
 
 	render() {
 		const { idea, type } = this.props;
-		const { liked, likes, sameUser } = this.state;
+		const { likes, sameUser } = this.state;
+		const liked = this.props.user.likes.includes(this.props.idea._id);
+		console.log('Idea Item props:', idea);
 
 		const likeButton = 
 			<Button onClick={this.handleLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
@@ -52,7 +56,7 @@ class IdeaItem extends Component {
 					<Icon name='empty heart' />
 					Like
 				</Button>
-				<Label as='a' basic color='red' pointing='left'>{likes}</Label>
+				<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
 			</Button>
 
 		const unLikeButton = 
@@ -61,7 +65,7 @@ class IdeaItem extends Component {
 					<Icon name='heart' />
 					Unlike
 				</Button>
-				<Label as='a' basic color='red' pointing='left'>{likes}</Label>
+				<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
 			</Button>
 
 		return (
