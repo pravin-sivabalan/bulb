@@ -1,0 +1,25 @@
+.login {
+	text-align: center;
+	width: 40%;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 20px;
+	margin-bottom: 0;
+	/*border-bottom-style: solid;
+	border-color: #cfcbc8;
+	border-bottom-width: 2px;*/
+	padding-top: 10px;
+}
+
+.login-div {
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.login-form {
+	padding: 50px 50px 40px 50px;
+	margin-top:10px;
+	border-style: solid;
+	border-color: #edebe9;
+}
