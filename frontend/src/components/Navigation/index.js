@@ -27,6 +27,17 @@ const NavigationAuth = ({ signOut }) =>
         <Menu.Item position='right' as={ Link } name="SignOut" to={routes.LOGIN} onClick={signOut} >Sign Out</Menu.Item>
       </Menu>
     </Responsive>
+    <Responsive as={Menu} {...Responsive.onlyTablet}>
+      <Menu fluid compact>
+        <Menu.Item as={ Link } name='Bulb' to={routes.HOME}><Header as='h3' color='blue'>Bulb</Header></Menu.Item>
+        <Menu.Item><Search/></Menu.Item>
+        <Menu.Item as={ Link } name='Home' to={routes.HOME}>Home</Menu.Item>
+        <Menu.Item as={ Link } name='CreateIdea' to={routes.CREATE_IDEA}>Create Idea</Menu.Item>
+        {/*<Menu.Item position='right' as={ Link } name='Account' to={routes.ACCOUNT}>Account</Menu.Item>*/}
+        <Menu.Item as={ Link } name='Settings' to={routes.SETTINGS}>Settings</Menu.Item>
+        <Menu.Item position='right' as={ Link } name="SignOut" to={routes.LOGIN} onClick={signOut} >Sign Out</Menu.Item>
+      </Menu>
+    </Responsive>
     <Responsive as={Menu} {...Responsive.onlyMobile}>
       <Menu fluid vertical>
         <Menu.Menu style={{ marginBottom:'10px' }}>
