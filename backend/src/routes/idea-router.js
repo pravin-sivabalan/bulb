@@ -34,7 +34,7 @@ router.get('/', Authorized, async (req, res) => {
 			.sort({date: -1})
 			.lean()
 			.exec();
-		ideas.forEach((idea) => idea.userHasLiked = currentUser.likes.includes(req.params.id));
+		// ideas.forEach((idea) => idea.userHasLiked = currentUser.likes.includes(req.params.id));
 
 		return successRes(res, ideas);
 	} catch (error) {
@@ -116,7 +116,11 @@ router.post('/like/:id', Authorized, async (req, res) => {
 		if (!idea) return errorRes(res, 404, 'Idea not found');
 		let user = await User.findById(req.user.id).exec();
 		if (!user) return errorRes(res, 404, 'User does not exist');
-		if (user.likes.includes(req.params.id)) return errorRes(res, 409, 'User has already liked this idea');
+		let alreadyLiked = false;
+		user.likes.forEach(like => {
+			if (like == req.params.id) alreadyLiked = true;
+		});
+		if (alreadyLiked) return errorRes(res, 409, 'User already liked this idea');
 
 		user = await User
 			.findByIdAndUpdate(
@@ -132,6 +136,16 @@ router.post('/like/:id', Authorized, async (req, res) => {
 					new: true
 				}
 			)
+			.populate({
+				path: 'likes',
+				select: ['_user', 'title', 'description', '_tags', 'likes'],
+				model: 'Idea',
+				populate: {
+					path: '_user',
+					select: ['_id', 'firstName', 'lastName', 'email', 'likes'],
+					model: 'User'
+				}
+			})
 			.exec();
 
 		const newIdea = await Idea
@@ -175,6 +189,16 @@ router.post('/unlike/:id', Authorized, async (req, res) => {
 					new: true
 				}
 			)
+			.populate({
+				path: 'likes',
+				select: ['_user', 'title', 'description', '_tags', 'likes'],
+				model: 'Idea',
+				populate: {
+					path: '_user',
+					select: ['_id', 'firstName', 'lastName', 'email', 'likes'],
+					model: 'User'
+				}
+			})
 			.exec();
 
 		const newIdea = await Idea

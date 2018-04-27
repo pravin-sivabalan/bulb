@@ -12,7 +12,19 @@ const Idea = require('../models/idea-model');
 
 router.get('/:id', async (req, res) => {
 	try {
-		const user = await User.findById(req.params.id, {password: 0}).exec();
+		const user = await User
+			.findOne({_id:req.params.id}, {password: 0})
+			.populate({
+				path: 'likes',
+				select: ['_user', 'title', 'description', '_tags', 'likes'],
+				model: 'Idea',
+				populate: {
+					path: '_user',
+					select: ['_id', 'firstName', 'lastName', 'email', 'likes'],
+					model: 'User'
+				}
+			})
+			.exec();
 		if (!user) return errorRes(res, 404, 'User not found');
 		return successRes(res, user);
 	} catch (error) {
