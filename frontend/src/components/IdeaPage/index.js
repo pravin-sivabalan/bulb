@@ -3,16 +3,17 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { Container, Comment, Card, Button, Icon, Label, Header, Form, TextArea } from 'semantic-ui-react';
-import { fetchIdea, createComment } from '../../actions';
+import { fetchIdea, createComment, likeIdea, unLikeIdea } from '../../actions';
 import { IdeaComment, IdeaItem } from '../Common';
 import withAuthorization from '../Session/withAuthorization';
 
 class IdeaPage extends Component {
   constructor(props) {
 		super(props);
-		console.log('User Page Props:', props);
+      console.log('User Page Props:', props);
 		this.state = {
          idea: null,
+         liked: false,
          comment: '',
          error: null
 		}
@@ -23,11 +24,40 @@ class IdeaPage extends Component {
          const id = this.props.match.params.id;
          const idea = await fetchIdea(id);
          console.log('Got idea:', idea);
-         this.setState({idea});
+         this.setState({
+            idea,
+            liked: this.props.user.likes.includes(idea._id)
+         });
+         // const liked = this.props.user.likes.includes(idea._id);
       } catch (error) {
          this.setState({error});
       }
    }
+
+   handleLike = async e => {
+		await this.props.likeIdea(this.state.idea._id);
+		this.setState({ 
+         liked: true,
+         idea: { 
+            ...this.state.idea,
+            likes: this.state.idea.likes+1
+         }
+      });
+		console.log('IdeaItem liked an idea');
+	}
+
+	handleUnLike = async e => {
+		console.log('Unliking idea');
+      await this.props.unLikeIdea(this.state.idea._id);
+      this.setState({ 
+         liked: false,
+         idea: { 
+            ...this.state.idea,
+            likes: this.state.idea.likes-1
+         }
+      });
+		console.log('IdeaItem disliked an idea');
+	}
    
    handleSubmit = async e => {
       const id = this.props.match.params.id;
@@ -38,17 +68,53 @@ class IdeaPage extends Component {
    }
 
   render() {
-		const { idea } = this.state;
       console.log('IdeaPage state:', this.state);
-      
+		const { idea, liked } = this.state;      
       if (!idea) return <div>Loading...</div>;
+      const sameUser = this.props.user._id === idea._user._id;
+		console.log('Idea Item props:', idea);
+
+		const likeButton = 
+			<Button onClick={this.handleLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
+				<Button compact color='red' size='small' >
+					<Icon name='empty heart' />
+					Like
+				</Button>
+				<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
+			</Button>
+
+		const unLikeButton = 
+			<Button onClick={this.handleUnLike} compact floated='left' size='small' as='div' labelPosition='right' style={{marginTop: 0}} >
+				<Button compact color='red' size='small' >
+					<Icon name='heart' />
+					Unlike
+				</Button>
+				<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
+			</Button>
+      
+      
 
       return (
          <Container style={{ marginTop: '30px' }}>
             <Card.Group>
                <Card fluid>
                   <Card.Content>
-                     <IdeaItem idea={idea} type='feed' />
+                     <Card fluid>
+                        <Card.Content>
+                           <Header as={Link} to={`/idea/${idea._id}`} dividing >{idea.title}</Header>
+                        <Card.Content description={idea.description} />
+                        </Card.Content>
+                        <Card.Content extra >
+                           {
+                              (!sameUser) &&
+                              (liked ? unLikeButton : likeButton)
+                           }
+                           <Header floated='right' dividing >
+                              Posted By: 
+                              <Link to={`/user/${idea._user._id}`}> {`${idea._user.firstName} ${idea._user.lastName}`}</Link>
+                           </Header>
+                        </Card.Content>
+                     </Card>
                   </Card.Content>
                </Card>
                <Card fluid>
@@ -72,5 +138,5 @@ class IdeaPage extends Component {
 export default compose(
 	withRouter,
 	withAuthorization(),
-	// connect(null, { followUser, unFollowUser })
+	connect(null, { likeIdea, unLikeIdea })
 )(IdeaPage);
