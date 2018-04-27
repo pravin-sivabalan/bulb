@@ -17,7 +17,6 @@ class HomePage extends Component {
   }
 
   handleChange = (e, data) => {
-    console.log('Data:', data.activeIndex);
     switch (data.activeIndex) {
       case 0:
         this.props.fetchGlobalFeed();
@@ -39,8 +38,8 @@ class HomePage extends Component {
     console.log('Rendering feed ideas:', globalFeed);
     const panes = [
       { menuItem: 'Global Feed',
-        pane: (
-          <Tab.Pane key='globalTab' attached={false} >
+        render: () => (
+          <Tab.Pane key='globalTab' active attached={false} >
             <Item.Group divided>
               {
                 globalFeed &&
@@ -53,7 +52,7 @@ class HomePage extends Component {
         ) 
       },
       { menuItem: 'Follow Feed',
-        pane: (
+        render: () => (
           <Tab.Pane key='followTab' attached={false} >
             <Item.Group divided>
               {
@@ -67,7 +66,7 @@ class HomePage extends Component {
         )
       },
       { menuItem: 'User Feed',
-        pane: (
+        render: () => (
           <Tab.Pane key='userTab' attached={false} >
             <Item.Group divided>
               {
@@ -87,8 +86,7 @@ class HomePage extends Component {
           onTabChange={this.handleChange}
           defaultActiveIndex={0}
           menu={{ secondary: true, pointing: true }}
-          panes={panes} 
-          renderActiveOnly={false}
+          panes={panes}
         />
       </Container>
     );
