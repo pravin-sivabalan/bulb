@@ -69,6 +69,9 @@ class IdeaItem extends Component {
 				<Label as='a' basic color='red' pointing='left'>{idea.likes}</Label>
 			</Button>
 
+		const likeCount =
+			<Label basic color='red'>Likes: {idea.likes}</Label>
+
 		return (
 			<Card fluid>
 				<Card.Content>
@@ -77,8 +80,7 @@ class IdeaItem extends Component {
 				</Card.Content>
 				<Card.Content extra >
 					{
-						(!sameUser) &&
-						(liked ? unLikeButton : likeButton)
+						sameUser ? likeCount : (liked ? unLikeButton : likeButton)
 					}
 					{
 						type === 'user' ?		
