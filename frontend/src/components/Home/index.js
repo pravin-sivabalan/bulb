@@ -87,7 +87,8 @@ class HomePage extends Component {
           onTabChange={this.handleChange}
           defaultActiveIndex={0}
           menu={{ secondary: true, pointing: true }}
-          panes={panes} renderActiveOnly={false}
+          panes={panes} 
+          renderActiveOnly={false}
         />
       </Container>
     );

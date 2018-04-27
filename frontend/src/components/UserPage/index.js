@@ -103,8 +103,8 @@ class UserPage extends Component {
 							
 							<ItemGroup divided>
 								{
-									(user && user.likedIdeas && user.likedIdeas.length)?
-										user.likedIdeas.map((idea,i) => <IdeaItem key={i} id={idea._id} type="feed" idea={idea}/>) :
+									(user && user.likes && user.likes.length) ?
+										user.likes.map((idea,i) => <IdeaItem key={i} id={idea._id} type="feed" idea={idea}/>) :
 										<p>No likes!</p>
 								}
 						</ItemGroup>
