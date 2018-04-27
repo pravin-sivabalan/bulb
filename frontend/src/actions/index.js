@@ -16,6 +16,8 @@ export const USER_FEED_ADD = 'USER_FEED_ADD';
 export const USER_FEED_REMOVE = 'USER_FEED_REMOVE';
 export const USER_FEED_ERROR = 'USER_FEED_ERROR';
 
+export const IDEA_UPDATED = 'IDEA_UPDATED';
+
 // Session actions
 export const AUTH_TOKEN_SET = 'AUTH_TOKEN_SET';
 export const DB_USER_SET = 'DB_USER_SET';
@@ -35,6 +37,8 @@ export const onSetUserFeed = (feed) => ({ type: USER_FEED_SET, feed });
 export const onAddUserFeed = (idea) => ({ type: USER_FEED_ADD, idea });
 export const onRemoveUserFeed = (idea) => ({ type: USER_FEED_REMOVE, idea });
 export const onErrorUserFeed = (error) => ({ type: USER_FEED_SET, error });
+
+export const onIdeaUpdated = (idea) => ({ type: IDEA_UPDATED, idea });
 
 // Session creators
 export const onSetDBUser = (user) => ({ type: DB_USER_SET, user });
@@ -272,6 +276,46 @@ export const createComment = async (id, comment) => {
 			{headers: {"Authorization" : `Bearer ${token}`},}
 		)
 		console.log('Got idea after commenting:', data.response);
+		return data.response;
+	} catch (error) {
+		console.error('Error:', error.response.data.error);
+		throw error.response.data.error;
+	}
+}
+
+export const likeIdea = id => async dispatch => {
+	try {
+		const token = getIdToken();
+		// Get DB user and input into Redux store
+		console.log(`Liking idea: ${id}`)
+		const { data } = await axios.post(
+			`/api/ideas/like/${id}`,
+			null,
+			{headers: {"Authorization" : `Bearer ${token}`}}
+		)
+		console.log('Got idea after liking:', data.response);
+		dispatch(onSetDBUser(data.response.user));
+		dispatch(onIdeaUpdated(data.response.idea));
+		return data.response;
+	} catch (error) {
+		console.error('Error:', error.response.data.error);
+		throw error.response.data.error;
+	}
+}
+
+export const unLikeIdea = id => async dispatch => {
+	try {
+		const token = getIdToken();
+		// Get DB user and input into Redux store
+		console.log(`Liking idea: ${id}`)
+		const { data } = await axios.post(
+			`/api/ideas/unlike/${id}`,
+			null,
+			{headers: {"Authorization" : `Bearer ${token}`}}
+		)
+		console.log('Got idea after liking:', data.response);
+		dispatch(onSetDBUser(data.response.user));
+		dispatch(onIdeaUpdated(data.response.idea));
 		return data.response;
 	} catch (error) {
 		console.error('Error:', error.response.data.error);

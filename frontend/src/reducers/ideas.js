@@ -10,8 +10,10 @@ import {
 	USER_FEED_SET,
 	USER_FEED_ADD,
 	USER_FEED_REMOVE,
-	USER_FEED_ERROR
+	USER_FEED_ERROR,
+	IDEA_UPDATED
 } from '../actions';
+import { stat } from 'fs';
 
 function ideasReducer(state = {
 	globalFeed: [],
@@ -97,6 +99,23 @@ function ideasReducer(state = {
 			return {
 				...state,
 				userFeedError: action.error
+			}
+		}
+		case IDEA_UPDATED: {
+			return {
+				...state,
+				globalFeed: state.globalFeed.map(item => {
+					if (item._id === action.idea._id) return action.idea;
+					return item;
+				}),
+				followFeed: state.followFeed.map(item => {
+					if (item._id === action.idea._id) return action.idea;
+					return item;
+				}),
+				userFeed: state.userFeed.map(item => {
+					if (item._id === action.idea._id) return action.idea;
+					return item;
+				})
 			}
 		}
 		
