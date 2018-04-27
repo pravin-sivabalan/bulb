@@ -46,8 +46,6 @@ class IdeaItem extends Component {
 	render() {
 		const { idea, type } = this.props;
 		const { likes, sameUser, liked } = this.state;
-		// const liked = this.props.user.likes.includes(this.props.idea._id);
-		// const liked = this.props.user.likes.find(like => like._id === this.props.idea._id);
 		console.log('Idea Item props:', this.props);
 		console.log('Idea Item state:', this.state);
 
